@@ -31,10 +31,15 @@ class Reducer:
      #   for transition in pnet.transitions:
          #   if Reducer.remove_transition(pnet, transition):
          #       print("Transition removed")
-        
-        for transition in pnet.transitions:
-            if Reducer.remove_local_transition(pnet, transition):
-                print("Local Transition removed")
+        count = 0
+
+        while(count<15):
+            count += 1
+            for transition in pnet.transitions.copy():
+                if Reducer.remove_local_transition(pnet, transition):
+                    break
+                break
+            break
 
 
     @staticmethod
@@ -67,9 +72,23 @@ class Reducer:
     
 
     @staticmethod
-    def remove_local_transition(net,transition):
-        place_before_transition = list(transition.in_arcs)[0].source
-      #  first_transition = list(place_bef)
+    def remove_local_transition(net, transition):
+        if len(transition.in_arcs) == 1 and len(transition.out_arcs) == 1:
+            place_before_transition = list(transition.in_arcs)[0].source  # will be removed
+            if len(place_before_transition.in_arcs) == 1:
+                first_transition = list(place_before_transition.in_arcs)[0].source  # will point to last place
+                place_after_transition = list(transition.out_arcs)[0].target #gets pointed from first_transition
+                petri_utils.add_arc_from_to(first_transition, place_after_transition, net)
+                print("added one arc to: ")
+                print(transition.label)
+                petri_utils.remove_transition(net, transition)
+                return True
+                #petri_utils.remove_place(net, place_before_transition)
+
+        return False
+
+
+
 
     @staticmethod
     def remove_local_transition_old(net, transition):
