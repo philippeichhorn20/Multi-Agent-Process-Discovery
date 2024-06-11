@@ -44,40 +44,23 @@ class Reducer:
 
     @staticmethod
     def remove_place(net, place):
-        if len(place.in_arcs) == 1 and len(place.out_arcs) == 1:
-            in_t = list(place.in_arcs)[0].source
-            out_t = list(place.out_arcs)[0].target
-            other_ins = in_t.out_arcs.remove(list(place.in_arcs)[0])    # t1 to px archs
-            if(other_ins and len(other_ins)> 0):
-                other_outs = list(other_ins)[0].target.out_arcs    # px to t2 archs
-                if( other_outs > 0 and list(other_outs)[0].target == list(place.out_arcs)[0].target):
-                    petri_utils.remove_arc(arc=list(place.in_arcs)[0], net=net)
-                    petri_utils.remove_arc(arc=list(place.out_arcs)[0],net=net)
-                    #petri_utils.remove_place(place=place, net=net)
-                    return True
+        for other_place in net.places:
+            if(set(arc.source for arc in other_place.in_arcs) == set(arc.source for arc in place.in_arcs) and set(arc.target for arc in other_place.out_arcs) == set(arc.target for arc in place.out_arcs) and place != other_place):
+                petri_utils.remove_place(net, place)
+                return True
         return False
 
     @staticmethod
     def remove_transition(net, transition):
+        #couldnt check it yet really due to lack of cases
         #check if current transition has one in on out arc (might not be sufficient todo check)
         # find a t1 
-        for other_trans in net.transitions:
-            if (other_trans.in_arcs == transition.in_arcs and other_trans.out_arcs == transition.out_arcs):
+        for other_transition in net.transitions:
+            if (set(arc.source for arc in other_transition.in_arcs) == set(arc.source for arc in transition.in_arcs) and
+                set(arc.target for arc in other_transition.out_arcs) == set(arc.target for arc in transition.out_arcs) and
+                transition != other_transition):
                 petri_utils.remove_transition(net, transition)
                 return True
-        return False
-            
-
-
-        if len(transition.in_arcs) == 1 and len(transition.out_arcs) == 1:
-            in_p = list(transition.in_arcs)[0].source
-            out_p = list(transition.out_arcs)[0].target
-            if in_p.label != out_p.label:
-                petri_utils.remove_arc(arc=list(transition.in_arcs)[0], net=net)
-                petri_utils.remove_arc(arc=list(transition.out_arcs)[0], net=net)
-                #petri_utils.remove_transition(trans=transition, net=net)
-                petri_utils.add_arc_from_to(in_p, out_p, net)
-                return True        
         return False
     
 
@@ -102,16 +85,24 @@ class Reducer:
 
     @staticmethod
     def place_merge(net, place):
-        if len(place.out_arcs) == 2:
-            t1 = list(place.out_arcs)[0].target
-            t2 = list(place.out_arcs)[1].target
-            if t1.label == t2.label:
-                petri_utils.remove_arc(list(place.out_arcs)[0], net)
-                petri_utils.remove_arc(list(place.out_arcs)[1], net)
-                petri_utils.remove_place(place, net)
-                petri_utils.add_arc_from_to(t1, t2, net)
-                return True
-        return False
+        for other_place in net.places:
+            
+            #4th
+            if (len((set(arc.source for arc in other_place.in_arcs)).intersection(set(arc.source for arc in place.in_arcs))) == 0):
+                #6TH:
+                set_of_places_to_t3_1 = {}
+                set_of_places_to_t3_2 = {}
+                for (x in set(arc.target for arc in place.out_arcs)):
+                    set_of_places_to_t3_1.add(x.source)
+                for (x in set(arc.target for arc in other_place.out_arcs)):
+                    set_of_places_to_t3_2.add(x.source)
+                if(set_of_places_to_t3_1.remove(place) == set_of_places_to_t3_2.remove(other_place)):
+                    petri_utils.remove_place(net, place)
+                    return True
+                else:
+                    return True
+                return False
+
 
            
 
