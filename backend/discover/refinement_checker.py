@@ -59,6 +59,16 @@ class Reducer:
 
     @staticmethod
     def remove_transition(net, transition):
+        #check if current transition has one in on out arc (might not be sufficient todo check)
+        # find a t1 
+        for other_trans in net.transitions:
+            if (other_trans.in_arcs == transition.in_arcs and other_trans.out_arcs == transition.out_arcs):
+                petri_utils.remove_transition(net, transition)
+                return True
+        return False
+            
+
+
         if len(transition.in_arcs) == 1 and len(transition.out_arcs) == 1:
             in_p = list(transition.in_arcs)[0].source
             out_p = list(transition.out_arcs)[0].target
@@ -73,50 +83,22 @@ class Reducer:
 
     @staticmethod
     def remove_local_transition(net, transition):
+        #todo: dont delet interacting transitions
         if len(transition.in_arcs) == 1 and len(transition.out_arcs) == 1:
             place_before_transition = list(transition.in_arcs)[0].source  # will be removed
-            if len(place_before_transition.in_arcs) == 1:
+            if len(place_before_transition.in_arcs) == 1 and len(place_before_transition.out_arcs) == 1:
                 first_transition = list(place_before_transition.in_arcs)[0].source  # will point to last place
                 place_after_transition = list(transition.out_arcs)[0].target #gets pointed from first_transition
-                petri_utils.add_arc_from_to(first_transition, place_after_transition, net)
-                print("added one arc to: ")
-                print(transition.label)
-                petri_utils.remove_transition(net, transition)
-                return True
-                #petri_utils.remove_place(net, place_before_transition)
+                if (len(place_after_transition.in_arcs)== 1):
+                    petri_utils.add_arc_from_to(first_transition, place_after_transition, net)
+                    print("added one arc to: ")
+                    print(transition.label)
+                    petri_utils.remove_transition(net, transition)
+                    petri_utils.remove_place(net, place_before_transition)
+
+                    return True
 
         return False
-
-
-
-
-    @staticmethod
-    def remove_local_transition_old(net, transition):
-        print(transition.label)
-        if (len(transition.in_arcs) > 0 and len(transition.out_arcs)>0):
-            print("step 1")
-            p1 = list(transition.in_arcs)[0].source
-            p2 = list(transition.out_arcs)[0].target
-
-            if  (len(p1.in_arcs)> 0 and len(p2.out_arcs)> 0 ):
-                print("step 2")
-
-                t1 = list(p1.in_arcs)[0].source
-                if(p1 and p2 and t1):
-                    print("step 3")
-
-                    if len(transition.in_arcs) == 1 and len(transition.out_arcs) == 1 and len(p1.in_arcs) == 1:
-                        print("step 4")
-                        petri_utils.remove_arc(arc = list(p1.in_arcs)[0], net = net)
-
-                        petri_utils.add_arc_from_to(t1, p2, net)
-
-                        petri_utils.remove_arc(arc = list(p1.out_arcs)[0], net =net)
-                        petri_utils.remove_arc(arc = list(transition.out_arcs)[0], net = net)
-                        #petri_utils.remove_arc(arc = list(p1.in_arcs)[0], net = net)
-                        #petri_utils.remove_transition(trans = transition, net = net)
-                        #petri_utils.remove_place(place = p2, net = net)
-                        return True
 
     @staticmethod
     def place_merge(net, place):
