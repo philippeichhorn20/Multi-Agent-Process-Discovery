@@ -804,8 +804,6 @@ class interface_patterns:
 		place_4 = petri_utils.add_place(net_ip_12, 'P4')
 		place_5 = petri_utils.add_place(net_ip_12, 'P5')
 		place_6 = petri_utils.add_place(net_ip_12, 'P6')
-		place_7 = petri_utils.add_place(net_ip_12, 'P7')
-		place_8 = petri_utils.add_place(net_ip_12, 'P8')
 
 		place_a = petri_utils.add_place(net_ip_12, 'a')
 		place_b = petri_utils.add_place(net_ip_12, 'b')
@@ -878,10 +876,7 @@ class interface_patterns:
 		patterns.append(interface_patterns.create_ip_12_petri_net())
 		return patterns
 
-# patterns = interface_patterns.get_patterns()
-# for x in patterns:
-# 	a,b,c= x
-# 	pm4py.view_petri_net(a, format="svg")
-
-x,y,z = interface_patterns.create_ip_12_petri_net()
-pm4py.view_petri_net(x)
+patterns = interface_patterns.get_patterns()
+for x in patterns:
+	a,b,c= x
+	pm4py.view_petri_net(a, format="png")

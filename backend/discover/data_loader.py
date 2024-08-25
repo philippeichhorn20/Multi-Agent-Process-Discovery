@@ -33,7 +33,6 @@ class Data_Loader:
     for net in list_of_nets:
         pnet, start, end = net
        # pm4py.view_petri_net(pnet, start, end, format="svg")
-        Reducer.apply(net)
        # pm4py.view_petri_net(pnet, start, end, format="svg")
 
 

@@ -37,15 +37,22 @@ class Refiner:
 	@staticmethod
 	def place_splitter(net: PetriNet, place: PetriNet.Place, in_arc_subset: Set):
 		# arcs: the set of inarcs of the place that should be split-off the main branch
+		print("superset?")
+		print(place.in_arcs)
+		print(in_arc_subset)
+		print("superset?")
+
 		if not place.in_arcs.issuperset(in_arc_subset):
 			raise Exception("in_arc_subset are not a subset of the given places in_arcs")
+			#return False
 
 
 		new_place = petri_utils.add_place(net, place.name)
-		for arc in in_arc_subset:
+		for arc in in_arc_subset.copy():
 			petri_utils.add_arc_from_to(arc.source, new_place, net)
-			petri_utils.remove_arc(net, arc)
-
+			#net.arcs.remove(arc) # didnt work so i substitiuted the function from the utils class (petri_utils.remover_arc())
+			arc.source.out_arcs.remove(arc)
+			arc.target.in_arcs.remove(arc)
 		for t in petri_utils.post_set(place).copy():
 			new_transition = petri_utils.add_transition(net,t.name)
 			petri_utils.add_arc_from_to(new_place, new_transition, net)
