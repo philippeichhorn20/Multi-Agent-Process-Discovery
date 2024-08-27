@@ -42,5 +42,5 @@ class InteractionUtils:
 	def merge_two_nets(a, b):
 		merged_net = pnutils.petri_utils.merge(nets=[a, b])
 		InteractionUtils.connect_async_interactions(merged_net)
-		#InteractionUtils.connect_sync_interactions(merged_net)
+		InteractionUtils.connect_sync_interactions(merged_net)
 		return merged_net
