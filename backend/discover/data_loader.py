@@ -32,7 +32,7 @@ class Data_Loader:
     list_of_nets = get_net_from_pnml(pnml_path)
     for net in list_of_nets:
         pnet, start, end = net
-        pm4py.view_petri_net(pnet)
+        #pm4py.view_petri_net(pnet)
 
 
 

@@ -876,7 +876,7 @@ class interface_patterns:
 		patterns.append(interface_patterns.create_ip_12_petri_net())
 		return patterns
 
-patterns = interface_patterns.get_patterns()
-for x in patterns:
-	a,b,c= x
-	pm4py.view_petri_net(a, format="png")
+# patterns = interface_patterns.get_patterns()
+# for x in patterns:
+# 	a,b,c= x
+# 	pm4py.view_petri_net(a, format="png")

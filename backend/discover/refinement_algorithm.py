@@ -2,7 +2,7 @@ import pm4py
 from pm4py import PetriNet
 from itertools import permutations
 from typing import Dict
-from Refiner import Refiner
+from .Refiner import Refiner
 
 from collections import deque
 from itertools import combinations
@@ -58,10 +58,10 @@ def is_refinement_via_search(net_A: PetriNet, net_B: PetriNet) -> bool:
 		for transformation in possible_transformations:
 			# Create a deep copy of the net to apply transformation
 			new_net = current_net.__deepcopy__()
-			pm4py.view_petri_net(new_net, )
+			# pm4py.view_petri_net(new_net, )
 
 			# Print which transformation is being applied
-			print(f"Applying transformation: {transformation}")
+			# print(f"Applying transformation: {transformation}")
 
 			# Apply transformation based on the type
 			if transformation[0] == 'place_duplicater':
@@ -78,17 +78,17 @@ def is_refinement_via_search(net_A: PetriNet, net_B: PetriNet) -> bool:
 			new_state_id = get_state_identifier(new_net, new_operations)
 
 			# Print the state identifier of the new net
-			print(f"New state identifier: {new_state_id}")
+			# print(f"New state identifier: {new_state_id}")
 
 			# Check if this state has been visited
 			if new_state_id not in visited:
-				print(f"New state not visited. Adding to queue.")
+				# print(f"New state not visited. Adding to queue.")
 				visited.add(new_state_id)
 				queue.append((new_net, new_operations))
-			else:
-				print(f"State already visited: {new_state_id}")
+			# else:
+			# 	print(f"State already visited: {new_state_id}")
 
-	print("No refinement found.")
+	# print("No refinement found.")
 	return False
 
 
@@ -225,39 +225,39 @@ def rho4(net):
 	# Implement transformation ρ4 (transition refinement)
 	pass
 
-# Create net1
-p1 = PetriNet.Place('p1')
-p2 = PetriNet.Place('p2')
-t1 = PetriNet.Transition('t1')
+# # Create net1
+# p1 = PetriNet.Place('p1')
+# p2 = PetriNet.Place('p2')
+# t1 = PetriNet.Transition('t1')
 
-arc1_net1 = PetriNet.Arc(p1, t1)
-arc2_net1 = PetriNet.Arc(t1, p2)
+# arc1_net1 = PetriNet.Arc(p1, t1)
+# arc2_net1 = PetriNet.Arc(t1, p2)
 
-net1 = PetriNet(
-	name="net1",
-	places={p1, p2},
-	transitions={t1},
-	arcs={arc1_net1, arc2_net1}
-)
+# net1 = PetriNet(
+# 	name="net1",
+# 	places={p1, p2},
+# 	transitions={t1},
+# 	arcs={arc1_net1, arc2_net1}
+# )
 
-# Create net2
-a = PetriNet.Place('a')
-b = PetriNet.Place('b')
-x = PetriNet.Transition('x')
+# # Create net2
+# a = PetriNet.Place('a')
+# b = PetriNet.Place('b')
+# x = PetriNet.Transition('x')
 
-arc1_net2 = PetriNet.Arc(a, x)
-arc2_net2 = PetriNet.Arc(x, b)
+# arc1_net2 = PetriNet.Arc(a, x)
+# arc2_net2 = PetriNet.Arc(x, b)
 
-net2 = PetriNet(
-	name="net2",
-	places={a, b},
-	transitions={x},
-	arcs={arc1_net2, arc2_net2}
-)
+# net2 = PetriNet(
+# 	name="net2",
+# 	places={a, b},
+# 	transitions={x},
+# 	arcs={arc1_net2, arc2_net2}
+# )
 
-# Check if the two nets are isomorphic
-isomorphic = are_petri_nets_isomorphic(net1, net2)
-if isomorphic:
-	print("The two Petri nets are isomorphic.")
-else:
-	print("The two Petri nets are not isomorphic.")
+# # Check if the two nets are isomorphic
+# isomorphic = are_petri_nets_isomorphic(net1, net2)
+# if isomorphic:
+# 	print("The two Petri nets are isomorphic.")
+# else:
+# 	print("The two Petri nets are not isomorphic.")

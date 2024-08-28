@@ -14,6 +14,7 @@ export const parsePnml = (pnmlContent) => {
       name: place.getElementsByTagName('name')[0]?.getElementsByTagName('text')[0]?.textContent || place.getAttribute('id') || '',
       x: parseFloat(place.getElementsByTagName('graphics')[0]?.getElementsByTagName('position')[0]?.getAttribute('x') || '0'),
       y: parseFloat(place.getElementsByTagName('graphics')[0]?.getElementsByTagName('position')[0]?.getAttribute('y') || '0'),
+      resource: place.getAttribute('resource') || '',
     }));
 
     const transitions = Array.from(net.getElementsByTagName('transition')).map(transition => ({
@@ -21,6 +22,8 @@ export const parsePnml = (pnmlContent) => {
       name: transition.getElementsByTagName('name')[0]?.getElementsByTagName('text')[0]?.textContent || transition.getAttribute('id') || '',
       x: parseFloat(transition.getElementsByTagName('graphics')[0]?.getElementsByTagName('position')[0]?.getAttribute('x') || '0'),
       y: parseFloat(transition.getElementsByTagName('graphics')[0]?.getElementsByTagName('position')[0]?.getAttribute('y') || '0'),
+      label: transition.getAttribute('label') || '',
+      resource: transition.getAttribute('resource') || '',
     }));
 
     const arcs = Array.from(net.getElementsByTagName('arc')).map(arc => ({
@@ -28,14 +31,26 @@ export const parsePnml = (pnmlContent) => {
       sourceId: arc.getAttribute('source') || '',
       targetId: arc.getAttribute('target') || '',
     }));
+
+    const initialMarking = {};
+    const finalMarking = {};
+    Array.from(net.getElementsByTagName('place')).forEach(place => {
+      const initialMarkingElement = place.getElementsByTagName('initialMarking')[0];
+      const finalMarkingElement = place.getElementsByTagName('finalMarking')[0];
+      if (initialMarkingElement) {
+        initialMarking[place.getAttribute('id')] = parseInt(initialMarkingElement.getElementsByTagName('text')[0]?.textContent || '0');
+      }
+      if (finalMarkingElement) {
+        finalMarking[place.getAttribute('id')] = parseInt(finalMarkingElement.getElementsByTagName('text')[0]?.textContent || '0');
+      }
+    });
     
-    return { places, transitions, arcs };
+    return { places, transitions, arcs, initialMarking, finalMarking };
   } catch (error) {
     console.error('Error parsing PNML:', error);
-    return { places: [], transitions: [], arcs: [] };
+    return { places: [], transitions: [], arcs: [], initialMarking: {}, finalMarking: {} };
   }
 };
-
 
 export const parseJson = (jsonContent) => {
   try {
@@ -48,41 +63,51 @@ export const parseJson = (jsonContent) => {
       name: place.id,
       x: 0,  // We'll use the NetBuilder to assign positions
       y: 0,
-      resource: place.resource
+      resource: place.resource || '',
     }));
 
     const transitions = parsedJson.transitions.map(transition => ({
       id: transition.id,
-      name: transition.label || transition.id,
+      name: transition.id,
+      label: transition.label,
       x: 0,  // We'll use the NetBuilder to assign positions
       y: 0,
-      resource: transition.resource
+      resource: transition.resource || '',
     }));
 
     const arcs = parsedJson.arcs.map(arc => ({
       id: `${arc.source}_to_${arc.target}`,
       sourceId: arc.source,
-      targetId: arc.target
+      targetId: arc.target,
     }));
 
-    // Add initial and final markings to the places
+    // Parse initial marking
+    const initialMarking = {};
     parsedJson.initialMarking.forEach(placeId => {
-      const place = places.find(p => p.id === placeId);
-      if (place) {
-        place.tokens = (place.tokens || 0) + 1;
-      }
+      initialMarking[placeId] = (initialMarking[placeId] || 0) + 1;
     });
 
+    // Parse final marking
+    const finalMarking = {};
     parsedJson.finalMarking.forEach(placeId => {
-      const place = places.find(p => p.id === placeId);
-      if (place) {
-        place.isFinal = true;
-      }
+      finalMarking[placeId] = (finalMarking[placeId] || 0) + 1;
     });
 
-    return { places, transitions, arcs };
+    return { 
+      places, 
+      transitions, 
+      arcs, 
+      initialMarking, 
+      finalMarking,
+    };
   } catch (error) {
     console.error('Error parsing JSON:', error);
-    return { places: [], transitions: [], arcs: [] };
+    return { 
+      places: [], 
+      transitions: [], 
+      arcs: [], 
+      initialMarking: {}, 
+      finalMarking: {},
+    };
   }
 };

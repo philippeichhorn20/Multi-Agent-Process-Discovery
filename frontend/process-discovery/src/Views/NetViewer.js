@@ -51,7 +51,7 @@ const NetViewer = ({ netElements }) => {
         return {
           data: { 
             id: transition.id || `transition_${Math.random()}`,
-            label: transition.name || transition.id,
+            label: transition.label || transition.id,
             resource: transition.resource,
             name: transition.name || transition.id
           },
