@@ -35,3 +35,54 @@ export const parsePnml = (pnmlContent) => {
     return { places: [], transitions: [], arcs: [] };
   }
 };
+
+
+export const parseJson = (jsonContent) => {
+  try {
+    console.log(jsonContent);
+    const parsedJson = JSON.parse(jsonContent);
+    console.log("JSON parsed successfully");
+
+    const places = parsedJson.places.map(place => ({
+      id: place.id,
+      name: place.id,
+      x: 0,  // We'll use the NetBuilder to assign positions
+      y: 0,
+      resource: place.resource
+    }));
+
+    const transitions = parsedJson.transitions.map(transition => ({
+      id: transition.id,
+      name: transition.label || transition.id,
+      x: 0,  // We'll use the NetBuilder to assign positions
+      y: 0,
+      resource: transition.resource
+    }));
+
+    const arcs = parsedJson.arcs.map(arc => ({
+      id: `${arc.source}_to_${arc.target}`,
+      sourceId: arc.source,
+      targetId: arc.target
+    }));
+
+    // Add initial and final markings to the places
+    parsedJson.initialMarking.forEach(placeId => {
+      const place = places.find(p => p.id === placeId);
+      if (place) {
+        place.tokens = (place.tokens || 0) + 1;
+      }
+    });
+
+    parsedJson.finalMarking.forEach(placeId => {
+      const place = places.find(p => p.id === placeId);
+      if (place) {
+        place.isFinal = true;
+      }
+    });
+
+    return { places, transitions, arcs };
+  } catch (error) {
+    console.error('Error parsing JSON:', error);
+    return { places: [], transitions: [], arcs: [] };
+  }
+};

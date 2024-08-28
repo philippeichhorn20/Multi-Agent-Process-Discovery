@@ -1,6 +1,6 @@
 import './App.css';
 import React from 'react';
-import MainView from './MainView';
+import MainView from './Views/MainView';
 import axios from 'axios';
 
 

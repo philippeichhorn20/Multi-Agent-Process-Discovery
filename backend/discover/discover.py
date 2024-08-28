@@ -36,7 +36,7 @@ async def run_inductive_miner(file_content, noise_threshold):
         print(merged_net.transitions)
 
         logging.info("Discovery and merging completed successfully")
-        return await asyncio.to_thread(export_to_pnml, merged_net, nets[0][1], nets[0][2])
+        return await asyncio.to_thread(export_to_json, merged_net, nets[0][1], nets[0][2])
     except Exception as e:
         logging.error(f"Error during discovery: {str(e)}")
         raise

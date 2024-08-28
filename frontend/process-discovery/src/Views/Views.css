@@ -1,0 +1,178 @@
+.main-view-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+}
+
+.header {
+  height: 60px;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  justify-content: space-between;
+}
+
+.footer {
+  height: 40px;
+  border-top: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+}
+
+.sidebar {
+  width: 250px;
+  border-right: 1px solid #ccc;
+  padding: 20px;
+}
+
+.net-viewer-container {
+  position: relative;
+  width: 100%;
+  height: 500px; /* Adjust as needed */
+}
+
+.net-viewer-tabs {
+  display: flex;
+  border-bottom: 1px solid #ccc;
+}
+
+.net-viewer-tab {
+  padding: 10px 20px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-bottom: none;
+  margin-right: 5px;
+  cursor: pointer;
+  display: flex;
+}
+
+.net-viewer-tab.active {
+  background-color: #fff;
+  border-bottom: 1px solid #fff;
+  margin-bottom: -1px;
+}
+
+.net-viewer-tab button {
+  margin-left: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.net-viewer-content {
+  flex: 1;
+  display: none;
+}
+
+.net-viewer-content.active {
+  display: block;
+}
+
+.net-viewer {
+  width: 100%;
+  height: 100%;
+  text-align: left;
+
+}
+
+.dropdown-container {
+  position: relative;
+}
+
+.file-input {
+  display: none;
+}
+
+.dropdown-button {
+  padding: 10px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.control-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.algorithm-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.radio-button {
+  margin-right: 10px;
+}
+
+.slider {
+  width: 100%;
+}
+
+.discover-button {
+  padding: 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.discover-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.reload-button {
+  padding: 10px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.loading-spinner {
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+}
