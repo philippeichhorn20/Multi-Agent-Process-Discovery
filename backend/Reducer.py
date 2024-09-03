@@ -31,7 +31,6 @@ class Reducer:
 			pm4py.view_petri_net(pnet)
 			for place in pnet.places.copy():
 				if not 'resource' in place.properties or place.properties['resource'] not in ['!', '?', 'sync', True]:
-					print("remove place and merge in: ")
 					if Reducer.remove_place(pnet, place):
 						changes.append(('add_place', place))
 						print("Place removed")
@@ -40,7 +39,6 @@ class Reducer:
 						print("Place merged")
 			for transition in pnet.transitions.copy():
 				if not 'resource' in transition.properties or transition.properties['resource'] not in ['!', '?', 'sync', True]:
-					print("remove transition in: ")
 					if Reducer.remove_transition(pnet, transition):
 						changes.append(('add_transition', transition))
 						print("Transition removed")
@@ -94,9 +92,9 @@ class Reducer:
 				arc.target for arc in other_place.out_arcs) == set(
 				arc.target for arc in place.out_arcs) and place != other_place):
 				petri_utils.remove_place(net, place)
-				# print("remove place: ",
-				#       [in_arcs.source.label for in_arcs in place.in_arcs],
-				#       [out_arcs.target.label for out_arcs in place.out_arcs])
+				print("remove place: ",
+				      [in_arcs.source.label for in_arcs in place.in_arcs],
+				      [out_arcs.target.label for out_arcs in place.out_arcs])
 				return True
 		return False
 
@@ -104,7 +102,7 @@ class Reducer:
 	def place_merge(net, place):
 		for other_place in net.places:
 			#4th no shared transitions before = the sets of transitions prior to p1 and p2 are two disjoint sets
-			if (len((set(
+			if (len(place.out_arcs) > 0 and len(other_place.out_arcs) > 0 and other_place != place and len((set(
 				arc.source for arc in other_place.in_arcs)).intersection(
 				set(arc.source for arc in place.in_arcs))) == 0):
 				#6TH:
@@ -118,10 +116,13 @@ class Reducer:
 						set(arc.source for arc in x.in_arcs))
 
 				if set_of_places_to_t3_1 == set_of_places_to_t3_2:  # Compare sets directly
+					print("places are different:", petri_utils.pre_set(place),petri_utils.pre_set(other_place))
+					for in_arcs in place.in_arcs:
+						petri_utils.add_arc_from_to(in_arcs.source, other_place, net)
 					petri_utils.remove_place(net, place)
 					print("merging place: ",
 					      [in_arcs.source.label for in_arcs in place.in_arcs],
 					      [out_arcs.target.label for out_arcs in
-					       place.out_arcs])
+					       place.out_arcs], place, other_place)
 					return True
 		return False

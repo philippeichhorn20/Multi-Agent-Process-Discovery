@@ -138,16 +138,16 @@ def are_petri_nets_isomorphic(net1: PetriNet, net2: PetriNet) -> bool:
 			place_map: Dict[PetriNet.Place, PetriNet.Place] = {p1: p2 for p1, p2 in zip(places1, place_perm)}
 			trans_map: Dict[PetriNet.Transition, PetriNet.Transition] = {t1: t2 for t1, t2 in zip(transitions1, trans_perm)}
 
-			print("\nTrying permutation:")
-			print("Place mapping:", {p.name: place_map[p].name for p in place_map})
-			print("Transition mapping:", {t.name: trans_map[t].name for t in trans_map})
+			# print("\nTrying permutation:")
+			# print("Place mapping:", {p.name: place_map[p].name for p in place_map})
+			# print("Transition mapping:", {t.name: trans_map[t].name for t in trans_map})
 
 			# Verify if the arc structures are preserved under the current mappings
 			if check_arc_structure(net1, net2, place_map, trans_map):
 				print("Isomorphic mapping found.")
 				return True
-			else:
-				print("Mapping did not preserve arc structure.")
+			# else:
+			# 	# print("Mapping did not preserve arc structure.")
 
 	print("No isomorphic mapping found.")
 	return False
@@ -185,7 +185,7 @@ def check_arc_structure(
 				break
 
 		if not found_match:
-			print(f"Mapped arc {mapped_arc} does not match any arc in net2.")
+			# print(f"Mapped arc {mapped_arc} does not match any arc in net2.")
 			return False
 
 	# Ensure every arc in net2 also has a corresponding mapped arc
@@ -201,7 +201,7 @@ def check_arc_structure(
 				break
 
 		if not found_match:
-			print(f"Net2 arc {net2_arc} does not match any mapped arc.")
+			# print(f"Net2 arc {net2_arc} does not match any mapped arc.")
 			return False
 	return True
 
