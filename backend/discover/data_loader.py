@@ -1,7 +1,7 @@
 import pm4py
 import pandas as pd
 
-from refinement_checker import Reducer 
+from Reducer import Reducer 
 
 
 class Data_Loader:

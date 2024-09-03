@@ -50,6 +50,9 @@ const applyLayeredLayout = (nodes, edges, isVertical) => {
   
   // Step 4: Coordinate assignment
   assignCoordinates(orderedLayers, isVertical);
+
+  // Step 5: Resource-based vertical layering
+  applyResourceLayering(nodes);
 };
 
 const applyForceDirectedLayout = (nodes, edges) => {
@@ -128,6 +131,29 @@ const assignCoordinates = (layers, isVertical) => {
         node.y = layerIndex * layerSpacing;
       }
     });
+  });
+};
+
+const applyResourceLayering = (nodes) => {
+  const resourceMap = new Map();
+  
+  // Group nodes by resource
+  nodes.forEach(node => {
+    if (!resourceMap.has(node.resource)) {
+      resourceMap.set(node.resource, []);
+    }
+    resourceMap.get(node.resource).push(node);
+  });
+
+  // Assign vertical positions based on resource
+  const resourceSpacing = 200;
+  let currentY = 0;
+  
+  resourceMap.forEach((resourceNodes, resource) => {
+    resourceNodes.forEach(node => {
+      node.y += currentY;
+    });
+    currentY += resourceSpacing;
   });
 };
 

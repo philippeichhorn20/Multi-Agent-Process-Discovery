@@ -94,7 +94,7 @@ const NetViewer = ({ netElements }) => {
             'shape': 'ellipse',
             'width': 40,
             'height': 40,
-            'background-color': 'data(resource)',
+           // 'background-color': 'data(resource)',
             'border-width': 2,
             'border-color': '#000',
             'text-margin-y': -5
@@ -114,7 +114,7 @@ const NetViewer = ({ netElements }) => {
             'shape': 'rectangle',
             'width': 40,
             'height': 30,
-            'background-color': 'data(resource)'
+        //    'background-color': 'data(resource)'
           }
         },
         {
@@ -139,8 +139,9 @@ const NetViewer = ({ netElements }) => {
     // Apply colors based on resource
     cy.nodes().forEach(node => {
       const resource = node.data('resource');
+    
       if (resource) {
-        node.style('background-color', getColorForResource(resource));
+        node.style('background-color', getColorForResource(resource));//getColorForResource(resource)
       }
     });
 

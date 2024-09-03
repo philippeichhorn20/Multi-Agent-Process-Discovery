@@ -2,7 +2,7 @@ from fastapi import FastAPI, UploadFile, Form, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 from typing import Optional
-from discover.discover import run_split_miner, run_inductive_miner
+from backend.discover import run_split_miner, run_inductive_miner
 import logging
 import asyncio
 import io
@@ -12,7 +12,7 @@ from discover.refinement_algorithm import are_petri_nets_isomorphic
 import json
 from pm4py.objects.petri_net.obj import PetriNet, Marking
 
-# fastapi dev api_ca.py
+# fastapi dev api_calls.py
 
 app = FastAPI()
 logging.basicConfig(level=logging.INFO)
@@ -109,14 +109,12 @@ def json_to_petri_net(json_data):
         place = PetriNet.Place(name=place_data['id'])
         net.places.add(place)
         places[place_data['id']] = place
-    print("dewk")
     # Create transitions
     transitions = {}
     for transition_data in json_data.get('transitions', []):
         transition = PetriNet.Transition(name=transition_data['id'], label=transition_data.get('label'))
         net.transitions.add(transition)
         transitions[transition_data['id']] = transition
-    print("dewk")
 
     # Create arcs
     for arc_data in json_data.get('arcs', []):
@@ -125,7 +123,6 @@ def json_to_petri_net(json_data):
         if source and target:
             arc = PetriNet.Arc(source, target)
             net.arcs.add(arc)
-    print("deewk")
 
     # Create initial marking
     # initial_marking = Marking()
