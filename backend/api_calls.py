@@ -2,13 +2,11 @@ from fastapi import FastAPI, UploadFile, Form, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 from typing import Optional
-from backend.discover import run_split_miner, run_inductive_miner
+from discover import run_split_miner, run_inductive_miner
 import logging
 import asyncio
-import io
 from fastapi import UploadFile, File, HTTPException, BackgroundTasks
-import pm4py
-from discover.refinement_algorithm import are_petri_nets_isomorphic
+from refinement_algorithm import are_petri_nets_isomorphic
 import json
 from pm4py.objects.petri_net.obj import PetriNet, Marking
 

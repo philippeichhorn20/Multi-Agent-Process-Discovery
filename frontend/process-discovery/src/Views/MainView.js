@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import NetViewer from '../Views/NetViewer';
-import { parsePnml, parseJson } from '../Parser/Parser';
+import VizViewer from './VizViewer';
+import { parseJsonToDot, parsePnmlToDot } from '../Parser/dot_parser';
 import './Views.css';
 
 const MainView = () => {
@@ -88,13 +88,13 @@ const MainView = () => {
   };
 
   const visualizeNet = (content, fileName) => {
-    let netElements;
+    let dotString;
     if (content.startsWith('<?xml') || content.startsWith('<pnml')) {
-      netElements = parsePnml(content);
+      dotString = parsePnmlToDot(content);
     } else {
-      netElements = parseJson(content);
+      dotString = parseJsonToDot(content);
     }
-    const newNetViewer = { netElements, fileName };
+    const newNetViewer = { dotString, fileName };
     setNetViewers(prev => [...prev, newNetViewer]);
     setActiveNetViewerIndex(netViewers.length);
   };
@@ -247,7 +247,14 @@ const MainView = () => {
               key={index}
               className={`net-viewer-content ${index === activeNetViewerIndex ? 'active' : ''}`}
             >
-              <NetViewer netElements={viewer.netElements} />
+              <VizViewer 
+                dotString={viewer.dotString} 
+                updateDotString={(newDotString) => {
+                  const updatedViewers = [...netViewers];
+                  updatedViewers[index].dotString = newDotString;
+                  setNetViewers(updatedViewers);
+                }}
+              />
             </div>
           ))}
         </div>

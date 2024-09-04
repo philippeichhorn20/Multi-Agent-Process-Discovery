@@ -6,6 +6,7 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "@viz-js/viz": "^3.8.0",
     "buffer": "^6.0.3",
     "cytoscape": "^3.30.2",
     "d3-force": "^3.0.0",
@@ -16,6 +17,7 @@
     "react-scripts": "5.0.1",
     "styled-components": "^6.1.12",
     "timers-browserify": "^2.0.12",
+    "viz.js": "^2.1.2",
     "web-vitals": "^2.1.4",
     "xml2js": "^0.6.2",
     "xmldom": "^0.6.0"
