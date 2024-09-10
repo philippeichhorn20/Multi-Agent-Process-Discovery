@@ -5,219 +5,42 @@
   width: 100vw;
 }
 
-.header {
-  height: auto;
-  min-height: 60px;
-  border-bottom: 1px solid #ccc;
-  display: flex;
-  align-items: center;
-  padding: 10px 20px;
-  justify-content: space-between;
-  flex-wrap: wrap;
-}
-
-.footer {
-  height: 40px;
-  border-top: 1px solid #ccc;
-  display: flex;
-  align-items: center;
-  padding: 0 20px;
-}
-
 .content {
   flex: 1;
   display: flex;
 }
 
-.sidebar {
-  width: 250px;
-  padding: 20px;
-  background-color: #f0f0f0;
-  border-right: 1px solid #ccc;
-  overflow-y: auto;
-}
 
-.net-selector {
-  margin-bottom: 10px;
-}
-
-.net-selector input[type="checkbox"] {
-  margin-right: 10px;
-}
-
-.sidebar button {
+.split-screen {
+  display: flex;
   width: 100%;
-  padding: 10px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 20px;
 }
 
-.sidebar button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
+.left-screen {
+  flex: 0 0 80%; /* 80% width */
+  background-color: #93c1da38; /* Light background color */
+  overflow: auto; /* Enable scrolling */
+  width: 100%; /* Set maximum height */
+  height: 100%; /* Ensure it doesn't exceed the container */
+  margin: auto; /* Center it */
 }
 
-.isomorphism-result {
-  margin-top: 20px;
-  font-weight: bold;
+.right-screen {
+  flex: 0 0 20%; /* 20% width */
+  padding: 10px; /* Optional padding */
+  background-color: #f9f9ff; /* Light background color */
 }
 
-.net-viewer-container {
-  flex: 1;
-  position: relative;
-  height: calc(100vh - 100px); /* Adjust based on header and footer height */
+.viz-viewer {
+  font-family: 'Courier New', Courier, monospace; /* Added monospace font */
+  max-height: 100%; /* Ensure VizViewer doesn't exceed its container */
+  overflow: auto; /* Enable scrolling within VizViewer */
 }
 
-.net-viewer-tabs {
-  display: flex;
-  border-bottom: 1px solid #ccc;
-}
-
-.net-viewer-tab {
-  padding: 10px 20px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  border-bottom: none;
-  margin-right: 5px;
-  cursor: pointer;
-  display: flex;
-}
-
-.net-viewer-tab.active {
-  background-color: #fff;
-  border-bottom: 1px solid #fff;
-  margin-bottom: -1px;
-}
-
-.net-viewer-tab button {
-  margin-left: 10px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.net-viewer-content {
-  flex: 1;
-  display: none;
-}
-
-.net-viewer-content.active {
-  display: block;
-}
-
-.net-viewer {
-  width: 100%;
-  height: 100%;
-  text-align: left;
-}
-
-.dropdown-container {
-  position: relative;
-}
-
-.file-input {
-  display: none;
-}
-
-.dropdown-button {
-  padding: 10px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.control-panel {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 20px;
-  margin-top: 0;
-  flex-wrap: wrap;
-}
-
-.algorithm-selector {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
-}
-
-.radio-button {
-  margin-right: 5px;
-}
-
-.slider {
-  width: 150px;
-}
-
-.discover-button {
-  padding: 10px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.discover-button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
-.reload-button {
-  padding: 10px;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.loading-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.loading-spinner {
-  border: 5px solid #f3f3f3;
-  border-top: 5px solid #3498db;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.error-message {
+.error {
   color: red;
   margin-top: 10px;
 }
 
-.layout-controls {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 10;
-  background-color: rgba(255, 255, 255, 0.8);
-  padding: 10px;
-  border-radius: 4px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
+/* Removed unused styles */
+/* ... other styles not used in MainView.js or VizViewer.js ... */
