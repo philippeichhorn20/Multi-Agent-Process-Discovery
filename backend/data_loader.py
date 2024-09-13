@@ -8,7 +8,7 @@ class Data_Loader:
     def create_petri_nets(path):
         log = pm4py.read_xes(file_path=path)
         df = pm4py.convert_to_dataframe(log)
-        df_grouped = df.groupby('org:resource')    # groups it by agent, in this dataset called "org:resource"
+        df_grouped = df.groupby(by='org:resource')    # groups it by agent, in this dataset called "org:resource"
         list_of_nets = []
 
 

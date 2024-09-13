@@ -1,15 +1,17 @@
 .main-view-container {
+
   display: flex;
   flex-direction: column;
   height: 100vh;
   width: 100vw;
+  overflow: hidden;
+  transform: skewX();
 }
 
 .content {
   flex: 1;
   display: flex;
 }
-
 
 .split-screen {
   display: flex;
@@ -29,12 +31,13 @@
   flex: 0 0 20%; /* 20% width */
   padding: 10px; /* Optional padding */
   background-color: #f9f9ff; /* Light background color */
+  
 }
 
 .viz-viewer {
   font-family: 'Courier New', Courier, monospace; /* Added monospace font */
-  max-height: 100%; /* Ensure VizViewer doesn't exceed its container */
-  overflow: auto; /* Enable scrolling within VizViewer */
+  overflow: hidden; /* Prevent zooming outside of VizViewer */
+
 }
 
 .error {
@@ -44,3 +47,11 @@
 
 /* Removed unused styles */
 /* ... other styles not used in MainView.js or VizViewer.js ... */
+
+.svg-container {
+    overflow: auto; 
+    transform: scale(10);
+    transform-origin: 0 0; 
+    width: 100%; 
+    height: 100%; 
+}

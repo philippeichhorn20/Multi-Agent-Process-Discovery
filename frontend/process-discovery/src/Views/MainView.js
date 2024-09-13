@@ -3,6 +3,7 @@ import VizViewer from './VizViewer';
 import { parsePnmlToDot, parseJsonToDot } from '../Parser/dot_parser'; // Import the parser
 import axios from 'axios'; // Import axios for API calls
 import './Views.css';
+import LeftScreenContent from './LeftScreen';
 
 const MainView = () => {
   const [file, setFile] = useState(null); // Track the uploaded file
@@ -61,39 +62,17 @@ const MainView = () => {
       <div className="content">
         <div className="split-screen">
           <div className="left-screen">
-            {dotString ? (
-              <VizViewer dotString={dotString} /> // Pass the DOT string to VizViewer
-            ) : (
-              <div className="file-upload-button">
-                <label>
-                  <input type="file" accept=".pnml,.xes" onChange={handleFileUpload} style={{ display: 'none' }} />
-                  <div className="large-file-icon">Upload File</div> {/* Large file icon/button */}
-                </label>
-              </div>
-            )}
-            {file && file.name.endsWith('.xes') && (
-              <div>
-                <h3>Select Miner</h3>
-                <label>
-                  <input type="radio" value="inductive" checked={miner === 'inductive'} onChange={() => setMiner('inductive')} />
-                  Inductive Miner
-                </label>
-                <label>
-                  <input type="radio" value="split" checked={miner === 'split'} onChange={() => setMiner('split')} />
-                  Split Miner
-                </label>
-                {miner === 'inductive' && (
-                  <div>
-                    <label>
-                      Noise Threshold:
-                      <input type="number" value={noiseThreshold} onChange={(e) => setNoiseThreshold(e.target.value)} />
-                    </label>
-                  </div>
-                )}
-                <button onClick={handleMinerSelection}>Run Miner</button>
-              </div>
-            )}
-            {loading && <div>Loading...</div>} {/* Loading animation */}
+            <LeftScreenContent
+              dotString={dotString}
+              file={file}
+              miner={miner}
+              setMiner={setMiner}
+              noiseThreshold={noiseThreshold}
+              setNoiseThreshold={setNoiseThreshold}
+              handleFileUpload={handleFileUpload}
+              handleMinerSelection={handleMinerSelection}
+              loading={loading}
+            />
           </div>
           <div className="right-screen">
             <h2>Stats</h2>
