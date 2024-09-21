@@ -2,6 +2,7 @@
 #
 # Two types of interactions:
 # Async: "a!" (message sent), "a?" (message received")
+
 from pm4py.objects.petri_net.utils import petri_utils
 
 import pm4py.objects.petri_net.utils as pnutils
@@ -42,5 +43,20 @@ class InteractionUtils:
 		merged_net = pnutils.petri_utils.merge(nets=[a,b])
 		InteractionUtils.connect_async_interactions(merged_net)
 		InteractionUtils.connect_sync_interactions(merged_net)
-
 		return merged_net
+
+
+	@staticmethod
+	def encode_name(place_or_transition):
+
+		string = ""
+		if "resource" in place_or_transition.properties:
+			string += place_or_transition.properties["resource"]
+		else:
+			string += "undefined"
+		string += ":"
+		if isinstance(place_or_transition, PetriNet.Place):
+			string += place_or_transition.name
+		else:
+			string += place_or_transition.label if place_or_transition.label != None else place_or_transition.name
+		return string

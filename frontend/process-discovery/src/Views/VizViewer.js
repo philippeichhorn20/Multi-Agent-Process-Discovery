@@ -3,90 +3,67 @@ import { instance } from "@viz-js/viz";
 
 const VizViewer = ({ dotString }) => {
   const [svg, setSvg] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const vizRef = useRef(null);
-  const svgContainerRef = useRef(null); // Reference for the SVG container
-  const [scale, setScale] = useState(1); // State for scaling
-
-  const handleScaleChange = (increment) => {
-    const newScale = scale + increment; // Adjust scale based on button click
-    setScale(Math.min(Math.max(newScale, 0.1), 10)); // Limit scale between 0.5 and 3
-  };
-
-  const downloadSVG = () => {
-    if (svg) {
-      const blob = new Blob([svg.outerHTML], { type: 'image/svg+xml' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'graph.svg'; // Set the file name
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url); // Clean up
-    }
-  };
-
-  useEffect(() => {
-    instance().then(viz => {
-      vizRef.current = viz;
-      renderGraph(viz); // Call renderGraph with the viz instance
-    });
-  }, []);
+  const svgContainerRef = useRef(null);
+  const [zoomLevel, setZoomLevel] = useState(1);
 
   const renderGraph = async (viz) => {
     if (viz && dotString) {
-      setLoading(true);
-      setError(null);
       try {
         const svgElement = await viz.renderSVGElement(dotString);
         setSvg(svgElement);
         if (svgContainerRef.current) {
           svgContainerRef.current.innerHTML = ''; // Clear previous SVG
-          svgElement.style.transform = 'scale(0.1)'; // Scale down the SVG to 10%
-          svgElement.style.transformOrigin = '0 0'; // Set the origin for scaling
           svgContainerRef.current.appendChild(svgElement); // Append new SVG
+          // Adjust SVG to fit the container
+          svgElement.setAttribute('width', '100%');
+          svgElement.setAttribute('height', '100%');
+          svgElement.setAttribute('preserveAspectRatio', 'xMidYMid meet');
         }
-        console.log('SVG generated:', svgElement); // Debug log
       } catch (error) {
         console.error('Error rendering graph:', error);
-        setError('Failed to render graph. Please check your DOT string.');
-      } finally {
-        setLoading(false);
       }
     }
   };
 
   useEffect(() => {
-    if (vizRef.current) {
-      renderGraph(vizRef.current); // Re-render when dotString changes
+    instance().then(viz => {
+      renderGraph(viz); // Call renderGraph with the viz instance
+    });
+  }, []);
+
+  useEffect(() => {
+    if (svg) {
+      // Adjust SVG to fit the container on scale change
+      svg.setAttribute('width', '100%');
+      svg.setAttribute('height', '100%');
+      svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    } else {
+      renderGraph(vizRef.current); // Re-render the graph when scale changes
     }
   }, [dotString]);
 
-  useEffect(() => {
-    if (svgContainerRef.current) {
-      svgContainerRef.current.style.transform = `scale(${scale})`; // Apply scale to the container
-    }
-  }, [scale]);
+  const handleZoomIn = () => {
+    setZoomLevel(zoomLevel + 0.4);
+  };
 
-  console.log('Current dotString:', dotString); // Debug log
+  const handleZoomOut = () => {
+    setZoomLevel(zoomLevel - 0.4);
+    if (zoomLevel < 0.1) {
+      setZoomLevel(0.1);
+    }
+  };
 
   return (
-    <div className="viz-viewer"> {/* Removed onTouchMove */}
-      <button onClick={() => handleScaleChange(0.1)}>+</button> {/* Plus button */}
-      <button onClick={() => handleScaleChange(-0.1)}>-</button> {/* Minus button */}
-      <button onClick={downloadSVG}>Download SVG</button> {/* Download button */}
-      {loading && <p>Loading graph...</p>}
-      {error && <p className="error">{error}</p>}
-      
-      <div className="svg-container" ref={svgContainerRef} /> {/* Container for the SVG */}
-      {!svg && !loading && !error && <p>No graph to display. Please provide a valid DOT string.</p>}
-      {/*       <div className="dot-string-display">
-        <h3>DOT String:</h3>
-        <pre>{dotString}</pre>
-      </div>*/}
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
 
+      <div style={{ position: 'relative', width: '100%', height: '100%', maxWidth: '800px', maxHeight: '600px' }}>
+      <div className="svg-container" ref={svgContainerRef} style={{ transform: `scale(${zoomLevel})`, width: '100%', height: '100%' }} />  
+      </div>
+      <div style={{ position: 'absolute', bottom: '10%', left: '50%', transform: 'translateX(-50%)'}}>
+        <button onClick={handleZoomIn}>Zoom In</button>
+        <button onClick={handleZoomOut}>Zoom Out</button>
+      </div>
     </div>
   );
 };

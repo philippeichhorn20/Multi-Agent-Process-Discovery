@@ -5,16 +5,14 @@ const LeftScreenContent = ({ dotString, file, miner, setMiner, noiseThreshold, s
   return (
     <>
       {dotString ? (
-        <VizViewer dotString={dotString} /> // Pass the DOT string to VizViewer
+			<VizViewer dotString={dotString} /> 
       ) : (
-        <div className="file-upload-button">
-          <label>
-            <input type="file" accept=".pnml,.xes" onChange={handleFileUpload} style={{ display: 'none' }} />
-            <div className="large-file-icon">Upload File</div> {/* Large file icon/button */}
-          </label>
-        </div>
+		<div>
+			<button onClick={() => document.getElementById('fileInput').click()}>Upload File</button>
+			<input type="file" id="fileInput" accept=".pnml,.xes" onChange={handleFileUpload} style={{ display: 'none' }} />
+		</div>
       )}
-      {file && file.name.endsWith('.xes') && (
+      {file && file.name.endsWith('.xes') && !dotString && (
         <div>
           <h3>Select Miner</h3>
           <label>

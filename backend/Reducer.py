@@ -45,9 +45,6 @@ class Reducer:
 						if(print_enabled):
 							print("Transition removed")
 							pm4py.view_petri_net(pnet)
-
-
-
 			for place in pnet.places.copy():
 				if True or not 'resource' in place.properties or place.properties['resource'] not in ['!', '?', 'sync', True]: # disbaled with True
 					if Reducer.remove_place(pnet, place):

@@ -2,12 +2,10 @@ import { DOMParser } from 'xmldom';
 
 export const parsePnml = (pnmlContent) => {
   try {
-    console.log(pnmlContent);
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(pnmlContent, 'text/xml');
     console.log("doc arrived");
 
-    console.log(xmlDoc);
     const net = xmlDoc.getElementsByTagName('net')[0];
     const places = Array.from(net.getElementsByTagName('place')).map(place => ({
       id: place.getAttribute('id'),

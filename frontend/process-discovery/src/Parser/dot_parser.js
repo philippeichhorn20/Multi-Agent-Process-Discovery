@@ -5,20 +5,33 @@ export const parsePnmlToDot = (pnmlContent) => {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(pnmlContent, 'text/xml');
     const net = xmlDoc.getElementsByTagName('net')[0];
-
     let dotString = 'digraph PetriNet {\n';
     dotString += '  rankdir=LR;\n';
     dotString += '  node [shape=circle];\n';
     dotString += '  node [shape=box];\n\n';
 
+    let uniqueResources = new Set();
+    const colors = ['red', 'blue', 'green', 'grey', 'orange', 'pink'];
 
+    Array.from(net.getElementsByTagName('place')).forEach(place => {
+      const name = place.getElementsByTagName('name')[0]?.getElementsByTagName('text')[0]?.textContent || place.getAttribute('id');
+      
+      if (name) {
+        const firstPart = name.split(':')[0].trim();
+        if (firstPart) {
+          uniqueResources.add(firstPart);
+        }
+      }
+    });
+
+    uniqueResources = Array.from(uniqueResources)  
+    
     // Parse places
     Array.from(net.getElementsByTagName('place')).forEach(place => {
       const id = place.getAttribute('id');
       const name = place.getElementsByTagName('name')[0]?.getElementsByTagName('text')[0]?.textContent || id;
       if (id) {
-        dotString += `  "${id}" [label="${name}", shape=circle];\n`;
-        console.log('places', id, name);
+        dotString += `  "${id}" [label="${name.split(':')[1].trim()}", shape=circle, color="${colors[uniqueResources.indexOf(name.split(':')[0].trim())%uniqueResources.length]}"];\n`;
       }
     });
 
@@ -27,8 +40,7 @@ export const parsePnmlToDot = (pnmlContent) => {
       const id = transition.getAttribute('id');
       const name = transition.getElementsByTagName('name')[0]?.getElementsByTagName('text')[0]?.textContent || id;
       if (id) {
-        dotString += `  "${id}" [label="${name}", shape=box];\n`;
-        console.log('trasn', id, name);
+        dotString += `  "${id}" [label="${name.split(':')[1].trim()}", shape=box, color="${colors[uniqueResources.indexOf(name.split(':')[0].trim())%uniqueResources.length]}"];\n`;
       }
     });
 
@@ -40,6 +52,8 @@ export const parsePnmlToDot = (pnmlContent) => {
     });
 
     dotString += '}\n';
+    dotString = dotString.replace(/:/g, "__");
+    console.log(dotString)
     return dotString;
   } catch (error) {
     console.error('Error parsing PNML to DOT:', error);
@@ -50,9 +64,7 @@ export const parsePnmlToDot = (pnmlContent) => {
 export const parseJsonToDot = (jsonContent) => {
   try {
     console.log(jsonContent)
-
     const parsedJson = JSON.parse(jsonContent);
-
     let dotString = 'digraph PetriNet {\n';
     dotString += '  rankdir=LR;\n';
     dotString += '  node [shape=circle];\n';

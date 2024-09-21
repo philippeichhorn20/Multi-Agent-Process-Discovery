@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import VizViewer from './VizViewer';
 import { parsePnmlToDot, parseJsonToDot } from '../Parser/dot_parser'; // Import the parser
-import axios from 'axios'; // Import axios for API calls
 import './Views.css';
 import LeftScreenContent from './LeftScreen';
+import StatView from './StatView'; // Import StatView
+import {basic_miner} from '../DatabaseRequests'
 
 const MainView = () => {
   const [file, setFile] = useState(null); // Track the uploaded file
   const [dotString, setDotString] = useState(''); // State for DOT string
   const [loading, setLoading] = useState(false); // State for loading animation
   const [miner, setMiner] = useState(''); // State for selected miner
-  const [noiseThreshold, setNoiseThreshold] = useState(''); // State for noise threshold
+  const [noiseThreshold, setNoiseThreshold] = useState(0); // State for noise threshold
+  const [statistics, setStatistics] = useState({}); // State for statistics
 
   const handleFileUpload = async (event) => {
     const uploadedFile = event.target.files[0];
@@ -29,32 +31,24 @@ const MainView = () => {
   };
 
   const handleMinerSelection = async () => {
-    if (file && miner) {
-      setLoading(true); // Start loading animation
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('algorithm', miner);
-      if (miner === 'inductive') {
-        formData.append('noise_threshold', noiseThreshold);
-      }
-
-      try {
-        const response = await axios.post('http://localhost:8000/discover', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-          responseType: 'text', // Expecting PNML format
-          timeout: 60000,
-          withCredentials: true,
-        });
-        const parsedDotString = parsePnmlToDot(response.data); // Parse PNML to DOT
-        setDotString(parsedDotString);
-      } catch (error) {
-        console.error('Error during API call:', error);
-      } finally {
-        setLoading(false); // Stop loading animation
-      }
+    setLoading(true); // Start loading animation
+    let result = await basic_miner(file, miner, noiseThreshold)
+    console.log(result)
+  
+    if(result){
+      setDotString(result.dotstring)
+      setStatistics(result.stats)
     }
+    setLoading(false); // Stop loading animation
+  };
+
+  const resetEverything = () => {
+    setFile(null);
+    setDotString('');
+    setLoading(false);
+    setMiner('');
+    setNoiseThreshold(0);
+    setStatistics({});
   };
 
   return (
@@ -74,12 +68,13 @@ const MainView = () => {
               loading={loading}
             />
           </div>
+          <div className="divider"></div> {/* Added vertical divider */}
           <div className="right-screen">
-            <h2>Stats</h2>
-            {/* Stats section will be added here */}
+            <StatView statistics={statistics} /> {/* Pass statistics to StatView */}
           </div>
         </div>
       </div>
+      {file && dotString && <button style={{ position: 'absolute', top: '5%', left: '5%' }} onClick={resetEverything}>Reset Everything</button>} {/* Added reset button */}
     </div>
   );
 };
