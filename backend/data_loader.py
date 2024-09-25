@@ -50,7 +50,6 @@ class Data_Loader:
             df['org:messageString'] = df['concept:name']
             return df.groupby(by='org:agent')
         df['concept:name'] = df['concept:name'] + "__" + df['org:messageString']
-
         df_grouped = df.groupby(by='org:agent')    # groups it by the new column 'org:agent'
         return df_grouped
 

@@ -9,12 +9,13 @@ from fastapi import UploadFile, File, HTTPException, BackgroundTasks
 from refinement_algorithm import are_petri_nets_isomorphic
 import json
 from pm4py.objects.petri_net.obj import PetriNet, Marking
-from stats import alignment_fitness, alignment_precision, entropy_based_fitness, entropy_based_precision
+from stats import alignment_fitness, alignment_precision, entropy_based_fitness, entropy_based_precision, entropy_based_precision_old
 from discover import export_to_pnml
 import pm4py
 from NetStorer import NetStorer
 from InteractionUtils import InteractionUtils
 from isomororph_check import matching_ip
+import os
 
 # fastapi dev api_calls.py
 
@@ -36,47 +37,62 @@ async def discover_process(
     file: UploadFile,
     algorithm: str = Form(...),
     use_compositional: bool =Form(...),
-    noise_threshold: Optional[float] = Form(None)
+    noise_threshold: Optional[float] = Form(None),
+    entropy_metrics: bool =Form(...),
+    alignment_metrics: bool =Form(...)
 ):
     logging.info(f"Received discovery request. Algorithm: {algorithm}")
     try:
+        composed_nets = None
         net_storage = await NetStorer.create(file)
+        net, im, fm, a_net, a_im, a_fm = None, None, None, None, None, None
         if(use_compositional):
-           result = await run_miner_compose(net_storage, noise_threshold, algorithm)
+           composed_nets = await run_miner_compose(net_storage, noise_threshold, algorithm)
+           net, im, fm, a_net, a_im, a_fm = composed_nets
+
         else:
             if algorithm == "split":
-                result = await run_split_miner_basic(net_storage, noise_threshold)
+                net, im, fm, = await run_split_miner_basic(net_storage, noise_threshold)
             elif algorithm == "inductive":
                 if noise_threshold is None:
                     raise ValueError("Noise threshold is required for inductive miner")
-                result = await run_inductive_miner_basic(net_storage, noise_threshold)
-        net, im, fm, a_net, a_im, a_fm = result
-        print("a")
-        # precision = alignment_precision(net, net_storage.df, im, fm) # todo uncomment, but takes long
-        print("b")
+                net, im, fm, = await run_inductive_miner_basic(net_storage, noise_threshold)
 
-        # fitness = alignment_fitness(net, net_storage.df, im, fm)
-        print("c")
+        matching_ip_string = ""
+        if a_net:
+            print("abstract net found")
+            matching_ip_string = matching_ip(a_net)
+        else:
+            print("abstract net not found")
 
-        entropy_precision, entropy_recall = entropy_based_precision()
-        InteractionUtils.encode_names_for_transfer(net)
-        InteractionUtils.encode_names_for_transfer(a_net)
-        # pm4py.view_petri_net(net, format='png')
-        # pm4py.view_petri_net(a_net, format='png')
-        abstract_net_pnml = export_to_pnml(a_net, a_im, a_fm)
-        pnml = export_to_pnml(net, im, fm)
-        logging.info("Discovery process completed, preparing response")
         response = {
-            "net": pnml,
-            "abstract_net": abstract_net_pnml,
             "stats":{
-                'matching ip': matching_ip(a_net),
-                # "precison": precision,
-                # "fitness": fitness["averageFitness"],
-                "entropy precision": entropy_precision,
-                "entropy recall": entropy_recall
+                'matching ip': matching_ip_string,
             }
         }
+
+        if entropy_metrics:
+            entropy_precision, entropy_recall = entropy_based_precision(net_storage=net_storage, net=net, initial=im, final=fm, )
+            response["stats"]["entropy precision"] = entropy_precision
+            response["stats"]["entropy recall"] = entropy_recall
+        if alignment_metrics:
+            precision = alignment_precision(net, net_storage.df, im, fm) # todo uncomment, but takes long
+            fitness = alignment_fitness(net, net_storage.df, im, fm)
+            response["stats"]["precision"] = precision
+            response["stats"]["fitness"] = fitness["averageFitness"]
+
+
+        InteractionUtils.encode_names_for_transfer(net)
+        pnml = export_to_pnml(net, im, fm)
+        response["net"] = pnml
+
+        if a_net: 
+            InteractionUtils.encode_names_for_transfer(a_net)
+            abstract_net_pnml = export_to_pnml(a_net, a_im, a_fm)
+            response["abstract_net"] = abstract_net_pnml
+
+        logging.info("Discovery process completed, preparing response")
+
         return Response(content=json.dumps(response), media_type="application/xml")
         
     except Exception as e:
@@ -84,6 +100,8 @@ async def discover_process(
         logging.error(str(e.with_traceback))
         raise HTTPException(status_code=500, detail=str(e))
     finally:
+        if os.path.exists('temp_log.xes'):
+            os.remove('temp_log.xes')
         logging.info("Request handling completed")
 
 

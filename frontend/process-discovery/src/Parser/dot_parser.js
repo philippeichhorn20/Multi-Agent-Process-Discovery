@@ -1,6 +1,6 @@
 import { DOMParser } from 'xmldom';
 
-export const parsePnmlToDot = (pnmlContent) => {
+export const parsePnmlToDot = (pnmlContent, args) => {
   try {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(pnmlContent, 'text/xml');
@@ -9,20 +9,25 @@ export const parsePnmlToDot = (pnmlContent) => {
     dotString += '  rankdir=LR;\n';
     dotString += '  node [shape=circle];\n';
     dotString += '  node [shape=box];\n\n';
-
-    let uniqueResources = new Set();
     const colors = ['red', 'blue', 'green', 'grey', 'orange', 'pink'];
-    Array.from(net.getElementsByTagName('place')).forEach(place => {
-      const name = place.getElementsByTagName('name')[0]?.getElementsByTagName('text')[0]?.textContent || place.getAttribute('id');
-      if (name && name != "") {
-        const firstPart = name.split(':')[0].trim();
-        if (firstPart) {
-          uniqueResources.add(firstPart);
-        }
-      }
-    });
 
-    uniqueResources = Array.from(uniqueResources);
+    let uniqueResources = args
+    if (!args){
+      uniqueResources = new Set();
+      Array.from(net.getElementsByTagName('place')).forEach(place => {
+        const name = place.getElementsByTagName('name')[0]?.getElementsByTagName('text')[0]?.textContent || place.getAttribute('id');
+        if (name && name != "") {
+          const firstPart = name.split(':')[0].trim();
+          if (firstPart) {
+            uniqueResources.add(firstPart);
+          }
+        }
+      });
+  
+      uniqueResources = Array.from(uniqueResources);
+    }
+
+
     
     // Parse places
     Array.from(net.getElementsByTagName('place')).forEach(place => {

@@ -18,6 +18,9 @@ const MainView = () => {
   const [useCompositionalMethod, setUseCompositionalMethod] = useState(true);
   const [colors, setColors] = useState([]); // State for colors
   const [resources, setResources] = useState([]); // State for resources
+  const [alignmentMetrics, setAlignmentMetrics] = useState(false); // State for alignment metrics
+  const [entropyMetrics, setEntropyMetrics] = useState(false); // State for entropy metrics
+
 
   const handleFileUpload = async (event) => {
     const uploadedFile = event.target.files[0];
@@ -37,7 +40,7 @@ const MainView = () => {
 
   const handleMinerSelection = async () => {
     setLoading(true); // Start loading animation
-    let result = await run_miner(file, miner, noiseThreshold, useCompositionalMethod)
+    let result = await run_miner(file, miner, noiseThreshold, useCompositionalMethod, alignmentMetrics, entropyMetrics)
   
     if(result){
       setDotString(result.dotstring)
@@ -62,8 +65,16 @@ const MainView = () => {
 
   return (
     <div className="main-view-container">
-      <div>
+      <div className='header'>
         Compositional Miner
+        <div style={{ display: 'flex', alignItems: 'center', fontSize: '10px', fontWeight: 'bold', color: '#6B6B6B', marginTop: '5px' }}>
+    by Philipp Eichhorn • implementing&nbsp;<a href="https://doi.org/10.1007/s10270-022-01008-x" style={{ color: '#3366CC', textDecoration: 'underline' }}>  Architecture aware sound Process Models</a>
+</div>
+
+
+      </div>
+      <div className='divider'>
+
       </div>
       <div className="content">
         {
@@ -79,6 +90,10 @@ const MainView = () => {
           loading={loading}
           setUseCompositionalMethod={setUseCompositionalMethod}
           useCompositionalMethod={useCompositionalMethod}
+          alignmentMetrics={alignmentMetrics}
+          setAlignmentMetrics={setAlignmentMetrics}
+          entropyMetrics={entropyMetrics}
+          setEntropyMetrics={setEntropyMetrics}
           />
         }
         <div className="split-screen">
@@ -106,7 +121,7 @@ const MainView = () => {
            }
         </div>
       </div>
-      {file && dotString && <button style={{ position: 'absolute', top: '5%', left: '10px' }} onClick={resetEverything}>Reset Everything</button>} {/* Added reset button */}
+      {file && dotString && <button style={{ position: 'absolute', bottom: '0', left: '45vw', margin:10 }} onClick={resetEverything}>Reset Everything</button>} {/* Added reset button */}
     </div>
   );
 };

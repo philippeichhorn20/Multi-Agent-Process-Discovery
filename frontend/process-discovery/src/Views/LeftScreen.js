@@ -27,11 +27,11 @@ const LeftScreenContent = ({
   // State to toggle the visibility of the second collapsible div
   const [isCollapsedBelow, setIsCollapsedBelow] = useState(false);
 
-  const boxStyle ={
+  const boxStyle ={ // style for statistics
     position: 'absolute', 
-    top: '90px', // Adjusted to place it below the button
-    left: '500px', 
-    width: '28vw', 
+    top: '40px', // Adjusted to place it below the button
+    right: '15px', 
+    width: '20vw', 
     height: '50vh', 
     backgroundColor: 'white', 
     border: "1px solid #ddd",
@@ -40,7 +40,6 @@ const LeftScreenContent = ({
     zIndex: 1, 
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
     overflow: 'hidden',
-    padding: '10px'
   }
 
   const toggleCollapse = () => {
@@ -68,10 +67,9 @@ const LeftScreenContent = ({
         onClick={toggleCollapse} 
         style={{
           position: 'absolute', 
-          top: '60px', 
+          top: '20vh', 
           left: '10px', 
           zIndex: 2, 
-          padding: '5px 10px', 
           cursor: 'pointer'
         }}
       >
@@ -82,13 +80,12 @@ const LeftScreenContent = ({
       {!isCollapsed && (
         <div style={{
           position: 'absolute', 
-          top: '100px', // Adjusted to place it below the button
+          top: '25vh', // Adjusted to place it below the button
           left: '10px', 
           width: '30vw', 
           height: '60vh', 
           backgroundColor: 'white', 
           borderRadius: "8px",
-          margin:"2px",
           border: "1px solid #ddd",
           zIndex: 1, 
           boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
@@ -113,14 +110,14 @@ const LeftScreenContent = ({
         onClick={toggleCollapseBelow} 
         style={{
           position: 'absolute', 
-          top: '60px', // Adjusted to place it below the first VizViewer
-          left: '510px', 
+          top: '15px', // Adjusted to place it below the first VizViewer
+          right: '20px', 
           zIndex: 2, 
-          padding: '5px 10px', 
+          padding: '', 
           cursor: 'pointer'
         }}
       >
-        {isCollapsedBelow ? 'Open Additional Info' : 'Collapse Additional Info'}
+        {isCollapsedBelow ? 'Open Statistics' : 'Collapse Statistics'}
       </button>
 
       {/* Conditionally render the second collapsible div */}

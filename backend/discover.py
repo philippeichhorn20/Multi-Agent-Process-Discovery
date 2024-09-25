@@ -15,10 +15,10 @@ import pandas as pd
 
 
 async def run_inductive_miner_basic(net_storage: NetStorer, noise_threshold):
-
     print(f"BAsic: Starting Inductive Miner basic with noise threshold {noise_threshold}")
     try:
-
+        if not noise_threshold:
+            noise_threshold = 0
         net, im, fm = pm4py.discover_petri_net_inductive(net_storage.df, noise_threshold=noise_threshold)
 
     except Exception as e:
@@ -28,9 +28,11 @@ async def run_inductive_miner_basic(net_storage: NetStorer, noise_threshold):
 
 
 
-async def run_split_miner_basic(net_storage: NetStorer, noise_threshold = 0.05):
+async def run_split_miner_basic(net_storage: NetStorer, noise_threshold):
     print(f"BAsic: Starting Split Miner basic with noise threshold {noise_threshold}")
     try:
+        if not noise_threshold:
+            noise_threshold = 0
         net, im, fm = split_miner(net_storage.xes_path, noise_threshold)
         return net, im, fm 
     except Exception as e:
@@ -55,6 +57,9 @@ async def run_miner_compose(net_storage, noise_threshold, miner):
                 pm4py.write.write_xes(log=group, file_path=temp_path)
                 print("pre splitr")
 
+                if not noise_threshold:
+                    noise_threshold = 0
+
                 net, im, fm = split_miner(path=temp_path, var=noise_threshold)
                 print("post splitr")
 
@@ -68,6 +73,8 @@ async def run_miner_compose(net_storage, noise_threshold, miner):
                     os.remove(temp_path)
     else:
         for name, group in df_grouped:
+            if not noise_threshold:
+                noise_threshold = 0            
             net, im, fm  = pm4py.discover_petri_net_inductive(group, noise_threshold= noise_threshold)
             for x in net.places:
                 x.properties.update({"resource": name})
@@ -87,36 +94,28 @@ async def run_miner_compose(net_storage, noise_threshold, miner):
 
 async def run_split_miner_compose(file_content):
     temp_file_path = 'temp_log.xes'
-    try:
-        with open(temp_file_path, 'wb') as temp_file:
-            temp_file.write(file_content)
-        log = await asyncio.to_thread(pm4py.read_xes, temp_file_path)
-        
-        # Convert log to dataframe and group by org:resource
-        df = pm4py.convert_to_dataframe(log)
-        df_grouped = df.groupby('org:resource')
-        
-        nets = []
-        for name, group in df_grouped:
-            net, im, fm = await asyncio.to_thread(pm4py.discover_petri_net_split_miner, group)
-            # Add resource name to places and transitions
-            for place in net.places:
-                place.properties['resource'] = name
-            for transition in net.transitions:
-                transition.properties['resource'] = name
-            nets.append((net, im, fm, name))
-        
-        # Merge the discovered Petri nets
-        merged_net, merged_im, merged_fm = pnutils.petri_utils.merge([n[0] for n in nets])
-        
-        return await asyncio.to_thread(export_to_json, merged_net, merged_im, merged_fm)
-    finally:
-        if os.path.exists(temp_file_path):
-            os.remove(temp_file_path)
-
-
-
-
+    with open(temp_file_path, 'wb') as temp_file:
+        temp_file.write(file_content)
+    log = await asyncio.to_thread(pm4py.read_xes, temp_file_path)
+    
+    # Convert log to dataframe and group by org:resource
+    df = pm4py.convert_to_dataframe(log)
+    df_grouped = df.groupby('org:resource')
+    
+    nets = []
+    for name, group in df_grouped:
+        net, im, fm = await asyncio.to_thread(pm4py.discover_petri_net_split_miner, group)
+        # Add resource name to places and transitions
+        for place in net.places:
+            place.properties['resource'] = name
+        for transition in net.transitions:
+            transition.properties['resource'] = name
+        nets.append((net, im, fm, name))
+    
+    # Merge the discovered Petri nets
+    merged_net, merged_im, merged_fm = pnutils.petri_utils.merge([n[0] for n in nets])
+    
+    return await asyncio.to_thread(export_to_json, merged_net, merged_im, merged_fm)
 
 
 def export_to_pnml(net, initial_marking, final_marking):
@@ -133,9 +132,6 @@ def export_to_pnml(net, initial_marking, final_marking):
     finally:
         if os.path.exists(temp_pnml_path):
             os.remove(temp_pnml_path)
-
-
-
 
 def export_to_json(net, initial_marking, final_marking):
     logging.info("Exporting Petri net to JSON")

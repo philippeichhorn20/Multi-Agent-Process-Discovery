@@ -57,10 +57,13 @@ class InteractionUtils:
 				if net.transitions.__contains__(trans2) and net.transitions.__contains__(trans):
 					if trans2.label and trans.label and trans.label.split("_")[0] == trans2.label.split("_")[0] and trans != trans2 and trans2.label.split("_")[0]=="s":
 						print("trans", trans, trans2)
+						
 						for arc in trans2.in_arcs.copy():
-							petri_utils.add_arc_from_to(arc.source, trans, net)
+							if not arc.source in petri_utils.pre_set(trans):
+								petri_utils.add_arc_from_to(arc.source, trans, net)
 						for arc in trans2.out_arcs.copy():
-							petri_utils.add_arc_from_to(trans, arc.target , net)
+							if not trans in petri_utils.pre_set(arc.target):
+								petri_utils.add_arc_from_to(trans, arc.target , net)
 						trans.properties['resource'] = "sync"
 						petri_utils.remove_transition(net, trans2)
 	@staticmethod
@@ -123,15 +126,10 @@ class InteractionUtils:
 			sent_part = ""
 		if("?" in received_part):
 			received_part = received_part.split('?')[0]
-
-		print("sent and rec", sent_part, received_part)
-		
+				
 		# Split the sent and received parts into individual messages
 		sent_messages = set(re.findall(r'\w+\d*', sent_part))  # Match words (alphanumeric strings) followed by numbers
 		received_messages = set(re.findall(r'\w+\d*', received_part))
-
-		print("sent and rec", sent_part, received_part)
-
 		
 		return sent_messages, received_messages
 

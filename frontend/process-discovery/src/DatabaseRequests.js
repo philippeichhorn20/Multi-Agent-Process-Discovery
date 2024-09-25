@@ -14,12 +14,14 @@ Type of request:
 import axios from 'axios'; // Import axios for API calls
 import { parsePnmlToDot } from './Parser/dot_parser';
 
-export async function run_miner(xes_file, miner_type, noise_threshold=0, use_compositional){
+export async function run_miner(xes_file, miner_type, noise_threshold=0, use_compositional, alignement_metrics, entropy_metrics){
 	if(xes_file && miner_type){
 		const formData = new FormData();
 		formData.append('file', xes_file);
 		formData.append('algorithm', miner_type);
 		formData.append("use_compositional", use_compositional)
+		formData.append("alignment_metrics",alignement_metrics )
+		formData.append("entropy_metrics", entropy_metrics)
 		if (miner_type === 'inductive') {
 		  formData.append('noise_threshold', noise_threshold);
 		}
@@ -33,8 +35,8 @@ export async function run_miner(xes_file, miner_type, noise_threshold=0, use_com
 			withCredentials: true,
 		  });
 		  const jsonData = JSON.parse(response.data); // Parse the JSON string
-		  const { dotString: abstractedDotString, uniqueResources: a, colors: ab } = parsePnmlToDot(jsonData.abstract_net); // Parse PNML to DOT for abstract net
 		  const { dotString: parsedDotString, uniqueResources: resources, colors } = parsePnmlToDot(jsonData.net); // Parse PNML to DOT for net
+		  const { dotString: abstractedDotString, uniqueResources: a, colors: ab } = parsePnmlToDot(jsonData.abstract_net, resources); // Parse PNML to DOT for abstract net
 
 		  return {
 			"dotstring": parsedDotString, 
