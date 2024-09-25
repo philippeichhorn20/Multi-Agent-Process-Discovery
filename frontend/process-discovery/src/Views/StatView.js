@@ -1,10 +1,10 @@
 import React from 'react';
+import './Views.css';
 
-const StatView = ({ statistics }) => { // Accept statistics as props
+const StatView = ({ statistics, colors, resources }) => {
   return (
-    <div className="stat-view">
-      <h2>Statistics</h2>
-      <table>
+    <div >
+      <table className="stat-table">
         <thead>
           <tr>
             <th>Statistic</th>
@@ -15,13 +15,22 @@ const StatView = ({ statistics }) => { // Accept statistics as props
           {Object.entries(statistics).map(([key, value]) => (
             <tr key={key}>
               <td>{key}</td>
-              <td>{value}</td>
+              <td>{typeof value === 'object' ? JSON.stringify(value) : value}</td>
             </tr>
           ))}
         </tbody>
       </table>
+    <div className="legend">
+      {resources.map((resource, index) => (
+        <div key={index} style={{ display: 'flex', alignItems: 'center' , fontSize:'7px'}}>
+          <div style={{ width: '5px', height: '5px', backgroundColor: colors[index], margin:"5px" }}></div>
+          <span>{resource == "X"? "Interaction Places":resource}</span>
+        </div>
+      ))}
+    </div>
     </div>
   );
 };
 
 export default StatView;
+

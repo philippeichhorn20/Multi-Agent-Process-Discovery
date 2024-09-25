@@ -5,6 +5,11 @@ import os
 
 class NetStorer(object):
 
+	def __init__(self):
+		self.xes_path = None
+		self.log = None
+		self.df = None
+
 	@classmethod
 	async def create(cls, file: UploadFile):
 		instance = cls()  # Create an instance

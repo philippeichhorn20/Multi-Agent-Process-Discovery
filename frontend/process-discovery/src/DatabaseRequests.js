@@ -14,11 +14,12 @@ Type of request:
 import axios from 'axios'; // Import axios for API calls
 import { parsePnmlToDot } from './Parser/dot_parser';
 
-export async function basic_miner(xes_file, miner_type, noise_threshold=0){
+export async function run_miner(xes_file, miner_type, noise_threshold=0, use_compositional){
 	if(xes_file && miner_type){
 		const formData = new FormData();
 		formData.append('file', xes_file);
 		formData.append('algorithm', miner_type);
+		formData.append("use_compositional", use_compositional)
 		if (miner_type === 'inductive') {
 		  formData.append('noise_threshold', noise_threshold);
 		}
@@ -32,10 +33,15 @@ export async function basic_miner(xes_file, miner_type, noise_threshold=0){
 			withCredentials: true,
 		  });
 		  const jsonData = JSON.parse(response.data); // Parse the JSON string
-		  const parsedDotString = parsePnmlToDot(jsonData.net); // Parse PNML to DOT
+		  const { dotString: abstractedDotString, uniqueResources: a, colors: ab } = parsePnmlToDot(jsonData.abstract_net); // Parse PNML to DOT for abstract net
+		  const { dotString: parsedDotString, uniqueResources: resources, colors } = parsePnmlToDot(jsonData.net); // Parse PNML to DOT for net
+
 		  return {
 			"dotstring": parsedDotString, 
-			"stats":jsonData.stats
+			"stats": jsonData.stats,
+			"abstractedDotString": abstractedDotString,
+			"colors": colors,
+			"resources": resources
 		  }; // Return parsed data
 		}catch (error) {
 			console.error('Error during API call:', error);

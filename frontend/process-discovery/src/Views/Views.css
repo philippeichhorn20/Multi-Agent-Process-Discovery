@@ -41,10 +41,8 @@
 }
 
 .svg-container {
-    width: 100%; 
-    height: 100%;
-    border: 1px solid black;
-    margin: auto;
+
+    border: 1px solid rgba(0, 0, 0, 0);
 }
 
 .divider  {
@@ -54,4 +52,225 @@
 
 
 
+.miner-selection {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  max-width: 400px;
+  margin: 20px auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
+.miner-selection h3 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  color: #333;
+  text-align: center;
+}
+
+.radio-group {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.radio-group label {
+  font-size: 1rem;
+  color: #555;
+  display: flex;
+  align-items: center;
+}
+
+.radio-group input {
+  margin-right: 8px;
+}
+
+.noise-threshold {
+  margin-bottom: 20px;
+}
+
+.noise-threshold label {
+  font-size: 1rem;
+  color: #555;
+}
+
+.noise-threshold input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.compositional-method {
+  margin-bottom: 20px;
+}
+
+.compositional-method label {
+  font-size: 1rem;
+  color: #555;
+  display: flex;
+  align-items: center;
+}
+
+.compositional-method input {
+  margin-right: 8px;
+}
+
+.run-miner-button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 15px;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+}
+
+.run-miner-button:hover {
+  background-color: #0056b3;
+}
+
+
+
+progress {
+  width: 100%;
+  height: 100%;
+}
+
+progress::-webkit-progress-bar {
+  background-color: #f3f3f3;
+  border-radius: 5px;
+}
+
+progress::-webkit-progress-value {
+  background-color: #4caf50;
+  border-radius: 5px;
+}
+
+
+/* Styling for the VizViewer container */
+.viz-container {
+
+
+
+  position: absolute;
+  top: 100px;
+  left: 10px;
+  width: 30vw;
+  height: 30vh;
+  background-color: white;
+  border: 1px solid black;
+  z-index: 1;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  padding: 10px; /* Adds padding around the content */
+  border-radius: 8px; /* Rounded corners */
+}
+
+/* Styling for the header section (title and subtitle) */
+.viz-header {
+  text-align: center;
+  margin-bottom: 10px; /* Space between header and the VizViewer */
+}
+
+/* Title styling */
+.viz-title {
+  text-align: left;
+  font-size: 14px;
+  font-weight: bold;
+  margin: 0;
+  padding-left: 3px;
+  color: #333;
+}
+
+/* Subtitle styling */
+.viz-subtitle {
+  padding-left: 3px;
+  font-size: 8px;
+  font-weight: normal;
+  margin: 0;
+  color: #484848;
+  text-align: left;
+}
+/* Container styling */
+.stat-view {
+  max-width: 100%;
+  padding: 20px;
+  margin: 0 auto;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Heading styling */
+.stat-heading {
+  text-align: center;
+  font-size: 1em;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Table styling */
+.stat-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.stat-table th, .stat-table td {
+  padding: 10px 15px;
+  text-align: left;
+  font-size: 0.5em;
+  color: #555;
+  word-wrap: break-word;
+}
+
+.stat-table th {
+  background-color: #007BFF;
+  color: #fff;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.stat-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.stat-table tr:hover {
+  background-color: #e2e2e2;
+  transition: background-color 0.3s;
+}
+
+/* Responsive styling */
+@media (max-width: 768px) {
+  .stat-heading {
+    font-size: 1.5em;
+  }
+
+  .stat-table th, .stat-table td {
+    font-size: 0.9em;
+  }
+
+  .stat-view {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stat-heading {
+    font-size: 1.3em;
+  }
+
+  .stat-table th, .stat-table td {
+    font-size: 0.8em;
+    padding: 8px 10px;
+  }
+
+  .stat-view {
+    padding: 10px;
+  }
+}

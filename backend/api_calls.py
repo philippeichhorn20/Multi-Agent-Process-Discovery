@@ -2,7 +2,7 @@ from fastapi import FastAPI, UploadFile, Form, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 from typing import Optional
-from discover import run_split_miner_compose, run_inductive_miner_basic, run_split_miner_basic
+from discover import run_split_miner_compose, run_inductive_miner_basic, run_split_miner_basic, run_miner_compose
 import logging
 import asyncio
 from fastapi import UploadFile, File, HTTPException, BackgroundTasks
@@ -13,6 +13,8 @@ from stats import alignment_fitness, alignment_precision, entropy_based_fitness,
 from discover import export_to_pnml
 import pm4py
 from NetStorer import NetStorer
+from InteractionUtils import InteractionUtils
+from isomororph_check import matching_ip
 
 # fastapi dev api_calls.py
 
@@ -33,41 +35,57 @@ async def discover_process(
     background_tasks: BackgroundTasks,
     file: UploadFile,
     algorithm: str = Form(...),
+    use_compositional: bool =Form(...),
     noise_threshold: Optional[float] = Form(None)
 ):
     logging.info(f"Received discovery request. Algorithm: {algorithm}")
     try:
         net_storage = await NetStorer.create(file)
-        if algorithm == "split":
-            result = await run_split_miner_basic(net_storage, noise_threshold)
-        elif algorithm == "inductive":
-            if noise_threshold is None:
-                raise ValueError("Noise threshold is required for inductive miner")
-            result = await run_inductive_miner_basic(net_storage, noise_threshold)
+        if(use_compositional):
+           result = await run_miner_compose(net_storage, noise_threshold, algorithm)
         else:
-            raise ValueError("Invalid algorithm specified")
-        net, im, fm = result
-        # precision = alignment_precision(net, df, im, fm) # todo uncomment, but takes long
-        # fitness = alignment_fitness(net, df, im, fm)
-        # entropy_precision = entropy_based_precision()
-        pnml = export_to_pnml(net, im, fm)
+            if algorithm == "split":
+                result = await run_split_miner_basic(net_storage, noise_threshold)
+            elif algorithm == "inductive":
+                if noise_threshold is None:
+                    raise ValueError("Noise threshold is required for inductive miner")
+                result = await run_inductive_miner_basic(net_storage, noise_threshold)
+        net, im, fm, a_net, a_im, a_fm = result
+        print("a")
+        # precision = alignment_precision(net, net_storage.df, im, fm) # todo uncomment, but takes long
+        print("b")
 
-        logging.info("Discovery completed successfully")
+        # fitness = alignment_fitness(net, net_storage.df, im, fm)
+        print("c")
+
+        entropy_precision, entropy_recall = entropy_based_precision()
+        InteractionUtils.encode_names_for_transfer(net)
+        InteractionUtils.encode_names_for_transfer(a_net)
+        # pm4py.view_petri_net(net, format='png')
+        # pm4py.view_petri_net(a_net, format='png')
+        abstract_net_pnml = export_to_pnml(a_net, a_im, a_fm)
+        pnml = export_to_pnml(net, im, fm)
         logging.info("Discovery process completed, preparing response")
         response = {
             "net": pnml,
+            "abstract_net": abstract_net_pnml,
             "stats":{
-                # "precision": precision,
-                # "fitness": fitness,  
+                'matching ip': matching_ip(a_net),
+                # "precison": precision,
+                # "fitness": fitness["averageFitness"],
+                "entropy precision": entropy_precision,
+                "entropy recall": entropy_recall
             }
         }
         return Response(content=json.dumps(response), media_type="application/xml")
         
     except Exception as e:
         logging.error(f"Error during discovery: {str(e)}")
+        logging.error(str(e.with_traceback))
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         logging.info("Request handling completed")
+
 
 # def json_to_petri_net(json_data):
 

@@ -1,18 +1,20 @@
 from pm4py import PetriNet
+import pm4py
 from pm4py.objects.petri_net.utils import petri_utils
 import networkx as nx
 from networkx.algorithms import isomorphism, optimize_graph_edit_distance, graph_edit_distance, simrank_similarity
+from interface_patterns import interface_patterns
 
 def is_isomorph_with_algorithm(net1: PetriNet, net2: PetriNet): # under construction Todo
 	# assumes each net has one starting place (only outgoing arcs)
     print("algroithmic isomorph check starting...")
+
     g1 = petri_net_to_networkx(net1)
     g2 = petri_net_to_networkx(net2)
     matcher = isomorphism.DiGraphMatcher(g1, g2,)
     is_isomorph = matcher.is_isomorphic()
     
     print("algroithmic isomorph check done")
-    print (is_isomorph)
     if(is_isomorph):
         return True
     else:
@@ -110,3 +112,18 @@ def petri_net_to_networkx(petri_net):
         G.add_edge(arc.source, arc.target, weight=arc.weight)
     
     return G
+
+
+def matching_ip(net: PetriNet):
+    ips = interface_patterns.get_patterns()
+    x = 0
+    for ip in ips:
+        print(ip)
+        x = x + 1
+        ip, _ , _ = ip
+        if is_isomorph_with_algorithm(ip, net):
+            print("matching done")
+            return ip.name
+
+
+

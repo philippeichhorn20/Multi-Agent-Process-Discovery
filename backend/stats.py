@@ -15,11 +15,11 @@ def alignment_precision(net: PetriNet, logs, initial: Marking, final: Marking):
 def entropy_based_precision():
     xes_path = 'temp_log.xes'
     pnml_path = 'temp_net.pnml'
-    cmd = ["java", "-jar", f"codebase-master/jbpt-pm/entropia/jbpt-pm-entropia-1.7.jar", "-emp", "-s", f"-rel={xes_path}", f"-ret={pnml_path}"]
-    result = subprocess.run(cmd)
-    print("precision: ", result.stdout)
-    return result
-
+    cmd = ["java", "-jar", f"codebase-master/jbpt-pm/entropia/jbpt-pm-entropia-1.7.jar", "-empr", "-s", f"-rel={xes_path}", f"-ret={pnml_path}"]
+    result = subprocess.run(cmd, capture_output=True)
+    responsestring = result.stdout.decode('utf-8')
+    precision, recall = responsestring.split(", ")
+    return precision, recall
 
 def entropy_based_fitness():
 	None

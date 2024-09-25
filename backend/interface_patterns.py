@@ -70,6 +70,8 @@ class interface_patterns:
 		transition_c = petri_utils.add_transition(net_ip_2, 'c')
 		transition_d = petri_utils.add_transition(net_ip_2, 'd')
 
+
+
 		# Create arcs
 		# left side
 		petri_utils.add_arc_from_to(place_P0, transition_c,
@@ -104,6 +106,96 @@ class interface_patterns:
 		petri_utils.add_arc_from_to(transition_b_exclamation, place_Pb, net_ip_2)
 		petri_utils.add_arc_from_to(place_Pb, transition_b_question, net_ip_2)
 
+
+	# Define the initial and final marking
+		initial_marking = pm4py.objects.petri_net.obj.Marking()
+		initial_marking[place_P1] = 1  # Initial token in place A1
+
+		final_marking = pm4py.objects.petri_net.obj.Marking()
+		final_marking[place_P5] = 1  # Final token in place A2
+
+		return net_ip_2, initial_marking, final_marking
+
+
+
+
+	@staticmethod
+	def create_ip_2b_petri_net():
+		"""
+		Slight variation of the ip_2 net that uses 2 transitions to merge the 4 final places into 2
+		"""
+		# Create a Petri net
+		net_ip_2 = PetriNet("IP-2b")
+
+		# Add places to the Petri net
+		place_P0 = petri_utils.add_place(net_ip_2, 'P0')
+		place_P1 = petri_utils.add_place(net_ip_2, 'P1')
+		place_P2 = petri_utils.add_place(net_ip_2, 'P2')
+		place_P3 = petri_utils.add_place(net_ip_2, 'P3')
+		place_P4 = petri_utils.add_place(net_ip_2, 'P4')
+		place_P5 = petri_utils.add_place(net_ip_2, 'P5')
+		place_P6 = petri_utils.add_place(net_ip_2, 'P6')
+		place_P7 = petri_utils.add_place(net_ip_2, 'P7')
+		place_P8 = petri_utils.add_place(net_ip_2, 'P8')
+		place_P9 = petri_utils.add_place(net_ip_2, 'P9')
+
+		place_Pa = petri_utils.add_place(net_ip_2, 'Pa')
+		place_Pb = petri_utils.add_place(net_ip_2, 'Pb')
+
+		place_P10 = petri_utils.add_place(net_ip_2, 'P10')
+		place_P11 = petri_utils.add_place(net_ip_2, 'P11')
+		# Add transitions to the Petri net
+		transition_a_exclamation = petri_utils.add_transition(net_ip_2, 'a!')
+		transition_a_question = petri_utils.add_transition(net_ip_2, 'a?')
+		transition_b_exclamation = petri_utils.add_transition(net_ip_2, 'b!')
+		transition_b_question = petri_utils.add_transition(net_ip_2, 'b?')
+		transition_c = petri_utils.add_transition(net_ip_2, 'c')
+		transition_d = petri_utils.add_transition(net_ip_2, 'd')
+
+		transition_e = petri_utils.add_transition(net_ip_2, 'e')
+		transition_f = petri_utils.add_transition(net_ip_2, 'f')
+
+		# Create arcs
+		# left side
+		petri_utils.add_arc_from_to(place_P0, transition_c,
+		                            net_ip_2)
+		petri_utils.add_arc_from_to(transition_c, place_P1, net_ip_2)
+		petri_utils.add_arc_from_to(transition_c, place_P2, net_ip_2)
+		petri_utils.add_arc_from_to(place_P1, transition_a_exclamation, net_ip_2)
+
+		petri_utils.add_arc_from_to(place_P2, transition_b_exclamation,
+		                            net_ip_2)
+		petri_utils.add_arc_from_to(transition_a_exclamation, place_P3,
+		                            net_ip_2)
+		petri_utils.add_arc_from_to(transition_b_exclamation, place_P4, net_ip_2)
+
+		# right side
+		petri_utils.add_arc_from_to(place_P5, transition_d, net_ip_2)
+
+		petri_utils.add_arc_from_to(transition_d, place_P6,
+		                            net_ip_2)
+		petri_utils.add_arc_from_to(transition_d, place_P7,
+		                            net_ip_2)
+		petri_utils.add_arc_from_to(place_P6, transition_b_question, net_ip_2)
+		petri_utils.add_arc_from_to(place_P7, transition_a_question, net_ip_2)
+
+		petri_utils.add_arc_from_to(transition_b_question, place_P8, net_ip_2)
+		petri_utils.add_arc_from_to(transition_a_question, place_P9, net_ip_2)
+
+		# interactions:
+		petri_utils.add_arc_from_to(transition_a_exclamation, place_Pa, net_ip_2)
+		petri_utils.add_arc_from_to(place_Pa, transition_a_question, net_ip_2)
+
+		petri_utils.add_arc_from_to(transition_b_exclamation, place_Pb, net_ip_2)
+		petri_utils.add_arc_from_to(place_Pb, transition_b_question, net_ip_2)
+
+		petri_utils.add_arc_from_to(place_P4, transition_e, net_ip_2)
+		petri_utils.add_arc_from_to(place_P3, transition_e, net_ip_2)
+		petri_utils.add_arc_from_to(place_P8, transition_f, net_ip_2)
+		petri_utils.add_arc_from_to(place_P9, transition_f, net_ip_2)
+
+		petri_utils.add_arc_from_to(transition_e, place_P10, net_ip_2)
+		petri_utils.add_arc_from_to(transition_f, place_P11, net_ip_2)
 
 	# Define the initial and final marking
 		initial_marking = pm4py.objects.petri_net.obj.Marking()
@@ -864,6 +956,7 @@ class interface_patterns:
 		patterns = []
 		patterns.append(interface_patterns.create_ip_1_petri_net())
 		patterns.append(interface_patterns.create_ip_2_petri_net())
+		patterns.append(interface_patterns.create_ip_2b_petri_net())
 		patterns.append(interface_patterns.create_ip_3_petri_net())
 		patterns.append(interface_patterns.create_ip_4_petri_net())
 		patterns.append(interface_patterns.create_ip_5_petri_net())
@@ -876,7 +969,7 @@ class interface_patterns:
 		patterns.append(interface_patterns.create_ip_12_petri_net())
 		return patterns
 
-# patterns = interface_patterns.get_patterns()
-# for x in patterns:
-# 	a,b,c= x
-# 	pm4py.view_petri_net(a, format="png")
+# net,_,_ = interface_patterns.create_ip_2b_petri_net()
+# pm4py.view_petri_net(net, format="png",  debug=True)
+# net,_,_ = interface_patterns.create_ip_2_petri_net()
+# pm4py.view_petri_net(net, format="png",  debug=True)

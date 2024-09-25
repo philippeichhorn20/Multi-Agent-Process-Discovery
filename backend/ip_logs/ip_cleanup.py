@@ -1,9 +1,12 @@
 import xml.dom.minidom as minidom
-
+import random
 
 def determine_agent(concept_name):
     if concept_name.startswith("s"):
-        return ["Agent 1", "Agent 2"]
+        if( random.randint(0,1) == 1):
+            return ["Agent 1"]
+        else:
+            return ["Agent 2"]
     elif (
         concept_name.startswith("t")
         or concept_name.startswith("a!")
@@ -58,7 +61,7 @@ def add_org_resource(input_path, output_path):
 
 
 # Example usage
-log_path = "../../data/event_logs/IP-12_init_log.xes"
-output_path = "../../data/event_logs/IP-12_init_log_new.xes"
+log_path = "/Users/philippeichhorn/Downloads/logs1/IP-12/IP-12_init_log.xes"
+output_path = "./IP-12_init_log_new.xes"
 
 add_org_resource(log_path, output_path)

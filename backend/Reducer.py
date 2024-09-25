@@ -1,12 +1,12 @@
 import pm4py
-from pm4py.objects.petri_net.obj import PetriNet
+from pm4py.objects.petri_net.obj import PetriNet, Marking
 from pm4py.objects.petri_net.utils import petri_utils
 
 class Reducer:
 	"""
     Refinement Operations:
 
-    1. Place Duplication -> Bullshit, should be place addition I think. > Thus implemented like so
+    1. Place Duplication ->  should be place addition I think. > Thus implemented like so
     2. Transition Duplication
     3. Local Transition introduction
     4. Place Split
@@ -18,8 +18,15 @@ class Reducer:
     """
 
 
-
-
+	@staticmethod
+	def apply_all(nets):
+		abstracted_nets = []
+		for net in nets:
+			net, im, fm = net
+			net = net.__deepcopy__()
+			abstracted_net = Reducer.apply(net)
+			abstracted_nets.append((abstracted_net, Marking(), Marking()))
+		return abstracted_nets
 
 	@staticmethod
 	def apply(net: PetriNet, print_enabled=False):
@@ -54,7 +61,6 @@ class Reducer:
 							pm4py.view_petri_net(pnet)
 			for transition in pnet.transitions.copy():
 				if not transition.label or ('!' not in transition.label and not '?' in transition.label and not 's' in transition.label):
-					transition.properties['resource'] = transition.label
 				#if not 'resource' in transition.properties or transition.properties['resource'] not in ['!', '?', 'sync', True]:
 					if Reducer.remove_local_transition(pnet, transition):
 						None
@@ -67,20 +73,30 @@ class Reducer:
 		return pnet  
 
 	@staticmethod
-	def remove_local_transition(net, transition): # Local transition elimination
+	def remove_local_transition(net, transition, my_way = True): # Local transition elimination
+		""""
+		This function removes a transition that is has one in arc and one out arc by mergin the place before and after into one.
+		According to the paper the place before must not have other outarcs and the place after not any other in arcs. 
+		In the my_way version, this rule is disregarded in order to achieve the level of abstraction in the examples.
+		"""
 		if len(transition.in_arcs) == 1 and len(transition.out_arcs) == 1:
 			place_before_transition = list(transition.in_arcs)[0].source
 			place_after_transition = list(transition.out_arcs)[0].target  #gets pointed from first_transition
 			# changes.append(('add_local_transition', (transition, place_before_transition, place_after_transition) ))
 			if(
-				# len(petri_utils.post_set(place_before_transition) )== 1
-				# and 
-				# len(petri_utils.pre_set(place_after_transition) )== 1
-				# and 
-				# petri_utils.pre_set(place_after_transition) == {transition}
-				# and
-				# petri_utils.post_set(place_before_transition) == {transition}
-				# and 
+				# start: extra condition
+				(
+					my_way or (				
+				len(petri_utils.post_set(place_before_transition) )== 1
+				and 
+				len(petri_utils.pre_set(place_after_transition) )== 1
+				and 
+				petri_utils.pre_set(place_after_transition) == {transition}
+				and
+				petri_utils.post_set(place_before_transition) == {transition}
+				))
+				# end: extra condition
+				and
 				(len(place_before_transition.out_arcs) == 1)
 				or 
 				(len(place_after_transition.in_arcs) == 1)
@@ -119,14 +135,19 @@ class Reducer:
 		return False
 
 	@staticmethod
-	def remove_transition(net, transition: PetriNet.Transition): # transition simplififcation
-		#check if current transition has one in on out arc (might not be sufficient todo check)
-		# find a t1
+	def remove_transition(net, transition: PetriNet.Transition, my_way = True): # transition simplififcation
+		"""
+		The remove_transition method, (a.k.a transition simplifactaion) merges transitions that have the same pre- and postset.
+		In theory (in both papaer), the two transitions have to have the same label (h(t)). However in the examples, this appears not to be applied as strictly.
+		See reduction_utils.string_match for more details.
+		"""
 		for other_trans in net.transitions:
 			if(
 				transition != other_trans
 				and 
-				(reduction_utils.string_match(other_trans.label, transition.label) or transition.label == None)
+			(my_way or transition.label == other_trans.label or(transition.label and other_trans.label and transition.label.split("_")[0] == other_trans.label.split("_")[0])) # same labels "h(t1) = h(t2)", perfect match (a_1 == a_2)
+				and
+				(reduction_utils.string_match(other_trans.label, transition.label) or transition.label == None) # l
 				and
 				petri_utils.pre_set(transition) == petri_utils.pre_set(other_trans)
 				and 
@@ -142,7 +163,8 @@ class Reducer:
 		return False
 
 	@staticmethod
-	def remove_place(net, place): # place siplification 
+	def remove_place(net, place, my_way = True): # place siplification 
+		# no difference between my_way and the paper
 		for other_place in net.places:
 			if(
 				petri_utils.pre_set(place) == petri_utils.pre_set(other_place)
@@ -200,7 +222,7 @@ class Reducer:
 	# 	return False
 
 
-	def postset_empty_place_simplifications(net: PetriNet, place: PetriNet.Place):
+	def postset_empty_place_simplifications(net: PetriNet, place: PetriNet.Place, my_way = True):
 		for other_place in net.places.copy():
 			if (
 				len(petri_utils.post_set(place)) == 0
@@ -209,7 +231,7 @@ class Reducer:
 			):
 				None
 				
-	def preset_disjoint_simplification(net: PetriNet, transition: PetriNet.Transition):
+	def preset_disjoint_simplification(net: PetriNet, transition: PetriNet.Transition, my_way = True):
 		for other_trans in net.transitions:
 			if(
 				other_trans != transition
@@ -298,9 +320,15 @@ class reduction_utils:
 
 	@staticmethod
 	def string_match(str1: str, str2: str): # if it is a interaction model, it has to be of same interaction object (a!_2==a!_2 but )
-		str1_is_interact = isinstance(str1, str) and ('!' in str1 or '?'  in str1 or 's' in str1)
-		str2_is_interact = isinstance(str2, str) and ('!' in str2 or '?'  in str2 or 's' in str2)
-		if(not str1_is_interact and not str2_is_interact): # both are interactive -> can merge
+		"""
+		advanced matching to ensure:
+		 - transitions can be merged, as long as no interaction gets lost
+
+
+		"""
+		str1_is_interact = isinstance(str1, str) and ('!' in str1 or '?'  in str1 or 's' == str1.split("_"))
+		str2_is_interact = isinstance(str2, str) and ('!' in str2 or '?'  in str2 or 's' == str2.split("_"))
+		if(not str1_is_interact and not str2_is_interact): # neither are interactive -> can merge
 			return True
 		if(str1_is_interact and not str2_is_interact): # one is interactive, one not -> cannot merge
 			return False
@@ -309,7 +337,8 @@ class reduction_utils:
 		str1 = str1.split('_')[0]
 		str2 = str2.split('_')[0]
 
-		return str1 == str2
+		return str1 == str2 # both are interactive -> merge, if they have the same label
+	
 		# min_len = min(len(str1), len(str2)) 
 		# for i in range(min_len): # both are interactive -> merge if label matches
 		# 	if str1[i] != str2[i] or str1[i] == '_':

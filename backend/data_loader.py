@@ -2,7 +2,7 @@ import pm4py
 import pandas as pd
 
 from Reducer import Reducer 
-
+from NetStorer import NetStorer
 
 class Data_Loader:
     def create_petri_net(path):
@@ -15,16 +15,15 @@ class Data_Loader:
             # using Inductive Miner to discover a petri net of each agent seperately
             net, im, fm = pm4py.discover_petri_net_inductive(group, activity_key='concept:name', case_id_key='case:concept:name', timestamp_key='time:timestamp')
             list_of_nets.append((net, im, fm))
-
         return list_of_nets
-
-    def create_splitted_nets(path):
+    
+    @staticmethod
+    def group_dataframe_by_resource(data_storage: NetStorer):
         """
         This function builds seperate petri nets for each Agent (1: org:resource, 2: org:group, 3: org:resource)
         It fetches initializes the 
         """
-        log = pm4py.read_xes(file_path=path)
-        df = pm4py.convert_to_dataframe(log)
+        df = data_storage.df
 
         if 'org:group' in df.columns:
             df['org:agent'] = df['org:group']
@@ -41,38 +40,24 @@ class Data_Loader:
             print("Log 3 mode")
             df['org:messageString'] = df.apply(
                 lambda row: (
-                    (str(row['Message:Sent']) if pd.notnull(row['Message:Sent']) else '') +
-                    (str(row['Message:Rec']) if pd.notnull(row['Message:Rec']) else '')
+                    (str(row['Message:Sent'])+"!" if pd.notnull(row['Message:Sent']) and row['Message:Sent']!="null" else '') +
+                    (str(row['Message:Rec'])+"?" if pd.notnull(row['Message:Rec']) and row['Message:Rec']!="null" else '')
                 ),
                 axis=1
             )
-            df['org:messageString'] = ''
+        else:
             print("Log 1 mode")
-            
-
-
-
-        df['customName'] = df['concept:name'] + "__" + df['org:messageString']
-
+            df['org:messageString'] = df['concept:name']
+            return df.groupby(by='org:agent')
+        df['concept:name'] = df['concept:name'] + "__" + df['org:messageString']
 
         df_grouped = df.groupby(by='org:agent')    # groups it by the new column 'org:agent'
-        list_of_nets = []
-
-        for name, group in df_grouped:
-            # using Inductive Miner to discover a petri net of each agent seperately
-            net, im, fm = pm4py.discover_petri_net_inductive(group, activity_key='customName', case_id_key='case:concept:name', timestamp_key='time:timestamp')
-            pm4py.view_petri_net(net)
-            list_of_nets.append((net, im, fm))
-
-
+        return df_grouped
 
     def get_net_from_pnml(path):
         net, im, fm = pm4py.read_pnml(path)
         x = net,im,fm
         return [x]
-
-
-
 
     def encode_messages_from_name_string(name: str):
         messages_in = []

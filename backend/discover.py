@@ -7,8 +7,10 @@ import pm4py.objects.petri_net.utils as pnutils
 from InteractionUtils import InteractionUtils
 from miner_algorithms import split_miner
 from NetStorer import NetStorer
-
-
+from data_loader import Data_Loader
+from itertools import chain
+from Reducer import Reducer
+import pandas as pd
 # Configure logging
 
 
@@ -18,12 +20,7 @@ async def run_inductive_miner_basic(net_storage: NetStorer, noise_threshold):
     try:
 
         net, im, fm = pm4py.discover_petri_net_inductive(net_storage.df, noise_threshold=noise_threshold)
-        print("assigning props")
 
-        for place in net.places:
-            place.name = InteractionUtils.encode_name(place)
-        for transition in net.transitions:
-            transition.label = InteractionUtils.encode_name(transition)
     except Exception as e:
         logging.error(f"Error during discoveryn inductive: {str(e)}")
         raise
@@ -35,60 +32,57 @@ async def run_split_miner_basic(net_storage: NetStorer, noise_threshold = 0.05):
     print(f"BAsic: Starting Split Miner basic with noise threshold {noise_threshold}")
     try:
         net, im, fm = split_miner(net_storage.xes_path, noise_threshold)
-        print("assigning props")
-        for place in net.places:
-            place.name = InteractionUtils.encode_name(place)
-        for transition in net.transitions:
-            transition.label = InteractionUtils.encode_name(transition)
-        return net, im, fm
- 
+        return net, im, fm 
     except Exception as e:
         logging.error(f"Error during discovery, split: {str(e)}")
         raise
 
 
-async def run_inductive_miner_compose(file_content, noise_threshold):
-    logging.info(f"Starting Inductive Miner discovery with noise threshold {noise_threshold}")
-    temp_file_path = 'temp_log.xes'
-    try:
-        with open(temp_file_path, 'wb') as temp_file:
-            temp_file.write(file_content)
-        log = pm4py.read_xes(temp_file_path)
-        # Convert log to dataframe and group by org:resource
-        df = pm4py.convert_to_dataframe(log)
-        df_grouped = df.groupby('org:resource')
+async def run_miner_compose(net_storage, noise_threshold, miner):
 
-        nets = []
-
+    df_grouped = Data_Loader.group_dataframe_by_resource(net_storage)
+    nets = []
+    # Merge the discovered Petri nets
+    if miner == "split":
+        temp_path = "temp_split_single_resource.xes"
         for name, group in df_grouped:
-            net, im, fm = pm4py.discover_petri_net_inductive(group, noise_threshold=noise_threshold)
 
-            # Add resource name to places and transitions
-            for place in net.places:
-                place.properties['resource'] = name
-            for transition in net.transitions:
-                transition.properties['resource'] = name
+            print(type(group))
+            try:
+            # Write the grouped data to a temp file
+                print("prepre splitr")
+                
+                pm4py.write.write_xes(log=group, file_path=temp_path)
+                print("pre splitr")
+
+                net, im, fm = split_miner(path=temp_path, var=noise_threshold)
+                print("post splitr")
+
+                for x in chain(net.places, net.transitions):
+                    x.properties.update({"resource": name})
+                nets.append((net, im, fm))
+
+            finally:
+                # Delete the temp file after usage
+                if os.path.exists(temp_path):
+                    os.remove(temp_path)
+    else:
+        for name, group in df_grouped:
+            net, im, fm  = pm4py.discover_petri_net_inductive(group, noise_threshold= noise_threshold)
+            for x in net.places:
+                x.properties.update({"resource": name})
+            for x in net.transitions:
+                x.properties.update({"resource": name})
             nets.append((net, im, fm))
-        # Merge the discovered Petri nets
-       
-        merged_net = InteractionUtils.merge_two_nets([net[0] for net in nets][0], [net[0] for net in nets][1])
 
-        logging.info("Discovery and merging completed successfully")
-        temp_pnml_path = 'temp_net.pnml'
-        pm4py.write.write_pnml(merged_net, nets[0][1], nets[0][2], temp_pnml_path)
-        
-        with open(temp_pnml_path, 'r') as pnml_file:
-            pnml_content = pnml_file.read()
-        
-        logging.info("Discovery and merging completed successfully")
-        return pnml_content
-    except Exception as e:
-        logging.error(f"Error during discovery: {str(e)}")
-        raise
-    finally:
-        if os.path.exists(temp_file_path):
-            os.remove(temp_file_path)
-        logging.info("Temporary file removed")
+    
+    abstracted_nets = Reducer.apply_all(nets)
+    abstracted_net, im_abstract, fm_abstract = InteractionUtils.merge_two_nets(abstracted_nets)
+
+    merged_net, im, fm = InteractionUtils.merge_two_nets(nets)
+
+    return merged_net, im, fm, abstracted_net, im_abstract, fm_abstract 
+
 
 
 async def run_split_miner_compose(file_content):
@@ -127,7 +121,7 @@ async def run_split_miner_compose(file_content):
 
 def export_to_pnml(net, initial_marking, final_marking):
     logging.info("Exporting Petri net to PNML")
-    temp_pnml_path = 'temp_net.pnml'
+    temp_pnml_path = 'final_output.pnml'
     try:
         pm4py.write_pnml(net, initial_marking, final_marking, temp_pnml_path)
         with open(temp_pnml_path, 'r') as pnml_file:
@@ -136,6 +130,10 @@ def export_to_pnml(net, initial_marking, final_marking):
     except Exception as e:
         logging.error(f"Error during PNML export: {str(e)}")
         raise
+    finally:
+        if os.path.exists(temp_pnml_path):
+            os.remove(temp_pnml_path)
+
 
 
 

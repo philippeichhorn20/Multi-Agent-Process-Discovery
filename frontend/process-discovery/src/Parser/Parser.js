@@ -4,7 +4,6 @@ export const parsePnml = (pnmlContent) => {
   try {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(pnmlContent, 'text/xml');
-    console.log("doc arrived");
 
     const net = xmlDoc.getElementsByTagName('net')[0];
     const places = Array.from(net.getElementsByTagName('place')).map(place => ({
