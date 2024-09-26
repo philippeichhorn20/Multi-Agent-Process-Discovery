@@ -15,7 +15,7 @@ import pandas as pd
 
 
 async def run_inductive_miner_basic(net_storage: NetStorer, noise_threshold):
-    print(f"BAsic: Starting Inductive Miner basic with noise threshold {noise_threshold}")
+    print(f"Basic: Starting Inductive Miner basic with noise threshold {noise_threshold}")
     try:
         if not noise_threshold:
             noise_threshold = 0
@@ -29,7 +29,7 @@ async def run_inductive_miner_basic(net_storage: NetStorer, noise_threshold):
 
 
 async def run_split_miner_basic(net_storage: NetStorer, noise_threshold):
-    print(f"BAsic: Starting Split Miner basic with noise threshold {noise_threshold}")
+    print(f"Basic: Starting Split Miner basic with noise threshold {noise_threshold}")
     try:
         if not noise_threshold:
             noise_threshold = 0
@@ -49,19 +49,15 @@ async def run_miner_compose(net_storage, noise_threshold, miner):
         temp_path = "temp_split_single_resource.xes"
         for name, group in df_grouped:
 
-            print(type(group))
             try:
             # Write the grouped data to a temp file
-                print("prepre splitr")
                 
                 pm4py.write.write_xes(log=group, file_path=temp_path)
-                print("pre splitr")
 
                 if not noise_threshold:
                     noise_threshold = 0
 
                 net, im, fm = split_miner(path=temp_path, var=noise_threshold)
-                print("post splitr")
 
                 for x in chain(net.places, net.transitions):
                     x.properties.update({"resource": name})

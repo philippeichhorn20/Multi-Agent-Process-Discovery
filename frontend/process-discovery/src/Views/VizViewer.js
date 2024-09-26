@@ -8,7 +8,6 @@ const VizViewer = ({ dotString, width, height, setDotString }) => {
   const vizRef = useRef(null);
   const svgContainerRef = useRef(null);
   const [dotstring, setDotstring] = useState(dotString)
-  const [zoomLevel, setZoomLevel] = useState(1);
 
   const renderGraph = async (viz) => {
     if (viz && dotstring) {

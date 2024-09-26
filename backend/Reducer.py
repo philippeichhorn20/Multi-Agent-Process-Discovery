@@ -29,46 +29,49 @@ class Reducer:
 		return abstracted_nets
 
 	@staticmethod
-	def apply(net: PetriNet, print_enabled=False):
+	def apply(net: PetriNet, print_enabled=False, my_way = False):
 		pnet = net
 		count = 0
 		changes = []  # List to track changes
-
-		while count < 15:
-			if print_enabled: print("count: ", count)
+		has_changed = True
+		while has_changed:
+			has_changed = False
 			count += 1
 			if print_enabled: pm4py.view_petri_net(pnet)
 			for transition in pnet.transitions.copy():
 				if True or not 'resource' in transition.properties or transition.properties['resource'] not in ['!', '?', 'sync', True]: # disabled with True
-					if Reducer.preset_disjoint_simplification(pnet, transition):
+					if Reducer.preset_disjoint_simplification(pnet, transition, my_way):
 						changes.append(('split_place', transition))
+						has_changed = True
 						if(print_enabled):
 							print("trans pds")
 							pm4py.view_petri_net(pnet)
 			for transition in pnet.transitions.copy():
 				if True or not 'resource' in transition.properties or transition.properties['resource'] not in ['!', '?', 'sync', True]: # disabled with True
-					if Reducer.remove_transition(pnet, transition):
+					if Reducer.remove_transition(pnet, transition, my_way=my_way):
 						changes.append(('add_transition', transition))
+						has_changed = True
 						if(print_enabled):
 							print("Transition removed")
 							pm4py.view_petri_net(pnet)
 			for place in pnet.places.copy():
 				if True or not 'resource' in place.properties or place.properties['resource'] not in ['!', '?', 'sync', True]: # disbaled with True
-					if Reducer.remove_place(pnet, place):
+					if Reducer.remove_place(pnet, place, my_way=my_way):
 						changes.append(('add_place', place))
+						has_changed = True		
+
 						if(print_enabled):
 							print("Place removed")
 							pm4py.view_petri_net(pnet)
 			for transition in pnet.transitions.copy():
 				if not transition.label or ('!' not in transition.label and not '?' in transition.label and not 's' in transition.label):
 				#if not 'resource' in transition.properties or transition.properties['resource'] not in ['!', '?', 'sync', True]:
-					if Reducer.remove_local_transition(pnet, transition):
-						None
+					if Reducer.remove_local_transition(pnet, transition, my_way=my_way):
+						has_changed = True
 						#changes.append(('add_local_transition', transition))
 						if(print_enabled):
 							print("Local transition removed")
 							pm4py.view_petri_net(pnet)
-
 
 		return pnet  
 
@@ -145,8 +148,7 @@ class Reducer:
 			if(
 				transition != other_trans
 				and 
-			(my_way or transition.label == other_trans.label or(transition.label and other_trans.label and transition.label.split("_")[0] == other_trans.label.split("_")[0])) # same labels "h(t1) = h(t2)", perfect match (a_1 == a_2)
-				and
+				
 				(reduction_utils.string_match(other_trans.label, transition.label) or transition.label == None) # l
 				and
 				petri_utils.pre_set(transition) == petri_utils.pre_set(other_trans)
@@ -326,8 +328,8 @@ class reduction_utils:
 
 
 		"""
-		str1_is_interact = isinstance(str1, str) and ('!' in str1 or '?'  in str1 or 's' == str1.split("_"))
-		str2_is_interact = isinstance(str2, str) and ('!' in str2 or '?'  in str2 or 's' == str2.split("_"))
+		str1_is_interact = isinstance(str1, str) and ('!' in str1 or '?'  in str1 or 's' == str1.split("_")[0])
+		str2_is_interact = isinstance(str2, str) and ('!' in str2 or '?'  in str2 or 's' == str2.split("_")[0])
 		if(not str1_is_interact and not str2_is_interact): # neither are interactive -> can merge
 			return True
 		if(str1_is_interact and not str2_is_interact): # one is interactive, one not -> cannot merge

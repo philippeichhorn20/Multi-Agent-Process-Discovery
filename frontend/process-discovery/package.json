@@ -22,7 +22,8 @@
     "viz.js": "^2.1.2",
     "web-vitals": "^2.1.4",
     "xml2js": "^0.6.2",
-    "xmldom": "^0.6.0"
+    "xmldom": "^0.6.0",
+    "axios": "^0.24.0"
   },
   "scripts": {
     "start": "react-scripts start",

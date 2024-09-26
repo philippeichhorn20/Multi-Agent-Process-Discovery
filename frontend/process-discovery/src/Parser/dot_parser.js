@@ -10,7 +10,7 @@ export const parsePnmlToDot = (pnmlContent, args) => {
     dotString += '  node [shape=circle];\n';
     dotString += '  node [shape=box];\n\n';
     const colors = ['red', 'blue', 'green', 'grey', 'orange', 'pink'];
-
+    console.log(pnmlContent)
     let uniqueResources = args
     if (!args){
       uniqueResources = new Set();

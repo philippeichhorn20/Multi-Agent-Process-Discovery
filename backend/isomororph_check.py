@@ -7,14 +7,10 @@ from interface_patterns import interface_patterns
 
 def is_isomorph_with_algorithm(net1: PetriNet, net2: PetriNet): # under construction Todo
 	# assumes each net has one starting place (only outgoing arcs)
-    print("algroithmic isomorph check starting...")
-
     g1 = petri_net_to_networkx(net1)
     g2 = petri_net_to_networkx(net2)
     matcher = isomorphism.DiGraphMatcher(g1, g2,)
     is_isomorph = matcher.is_isomorphic()
-    
-    print("algroithmic isomorph check done")
     if(is_isomorph):
         return True
     else:
@@ -22,7 +18,6 @@ def is_isomorph_with_algorithm(net1: PetriNet, net2: PetriNet): # under construc
 
 def edit_distance_heuristic(net1: PetriNet, net2: PetriNet):
     	# assumes each net has one starting place (only outgoing arcs)
-    print("algroithmic heuristic starting...")
     g1 = petri_net_to_networkx(net1)
     g2 = petri_net_to_networkx(net2)
     generator = optimize_graph_edit_distance(g1,g2)
@@ -33,8 +28,6 @@ def edit_distance_heuristic(net1: PetriNet, net2: PetriNet):
         dist = x
         if(count == 3):
             break
-        print(dist)
-    print("finished heuristic: ", dist)
     return dist
 
 
@@ -79,10 +72,6 @@ def vf2_petri_net(net1: PetriNet, net2: PetriNet):
         post_set_node1 = {mapping[x.target] for x in node1.out_arcs if x.target in mapping}
         post_set_node2 = {x.target for x in node2.out_arcs}  # Changed from x.source to x.target
 
-        print("Pre-set of node1:", pre_set_node1)
-        print("Pre-set of node2:", pre_set_node2)
-        print("Post-set of node1:", post_set_node1)
-        print("Post-set of node2:", post_set_node2)
 
         return len(pre_set_node1.difference(pre_set_node2)) == 0 and len(post_set_node1.difference(post_set_node2)) == 0
 
@@ -118,11 +107,9 @@ def matching_ip(net: PetriNet):
     ips = interface_patterns.get_patterns()
     x = 0
     for ip in ips:
-        print(ip)
         x = x + 1
         ip, _ , _ = ip
         if is_isomorph_with_algorithm(ip, net):
-            print("matching done")
             return ip.name
 
 

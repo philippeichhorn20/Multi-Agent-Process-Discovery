@@ -55,9 +55,7 @@ class InteractionUtils:
 		for trans in net.transitions.copy():
 			for trans2 in net.transitions.copy():
 				if net.transitions.__contains__(trans2) and net.transitions.__contains__(trans):
-					if trans2.label and trans.label and trans.label.split("_")[0] == trans2.label.split("_")[0] and trans != trans2 and trans2.label.split("_")[0]=="s":
-						print("trans", trans, trans2)
-						
+					if trans2.label and trans.label and trans.label.split("_")[0] == trans2.label.split("_")[0] and trans != trans2 and trans2.label.split("_")[0]=="s":						
 						for arc in trans2.in_arcs.copy():
 							if not arc.source in petri_utils.pre_set(trans):
 								petri_utils.add_arc_from_to(arc.source, trans, net)
@@ -77,17 +75,12 @@ class InteractionUtils:
 
 	@staticmethod
 	def merge_two_nets(nets):
-
 		merged_net = pnutils.petri_utils.merge(nets=[net[0] for net in nets])
 		im = InteractionUtils.merge_markings([net[1] for net in nets])
 		fm = InteractionUtils.merge_markings([net[2] for net in nets])
 		InteractionUtils.connect_async_interactions(merged_net)
 		InteractionUtils.connect_sync_interactions(merged_net)
-		print("connecting done")
 		return merged_net, im, fm
-
-
-
 
 	@staticmethod
 	def encode_name(place_or_transition):

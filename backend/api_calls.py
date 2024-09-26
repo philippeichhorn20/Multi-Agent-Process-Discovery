@@ -33,7 +33,6 @@ app.add_middleware(
 
 @app.post("/discover")
 async def discover_process(
-    background_tasks: BackgroundTasks,
     file: UploadFile,
     algorithm: str = Form(...),
     use_compositional: bool =Form(...),
@@ -71,16 +70,26 @@ async def discover_process(
             }
         }
 
-        if entropy_metrics:
-            entropy_precision, entropy_recall = entropy_based_precision(net_storage=net_storage, net=net, initial=im, final=fm, )
-            response["stats"]["entropy precision"] = entropy_precision
-            response["stats"]["entropy recall"] = entropy_recall
-        if alignment_metrics:
-            precision = alignment_precision(net, net_storage.df, im, fm) # todo uncomment, but takes long
-            fitness = alignment_fitness(net, net_storage.df, im, fm)
-            response["stats"]["precision"] = precision
-            response["stats"]["fitness"] = fitness["averageFitness"]
 
+        try:
+            if entropy_metrics:
+                entropy_precision, entropy_recall = entropy_based_precision(net_storage=net_storage, net=net, initial=im, final=fm, )
+                response["stats"]["entropy precision"] = entropy_precision
+                response["stats"]["entropy recall"] = entropy_recall
+        except Exception as e:
+            logging.error(f"Error during entropy metrics calculation: {str(e)}")
+            response["stats"]["entropy error"] = str(e)
+
+
+        try:
+            if alignment_metrics:
+                precision = alignment_precision(net, net_storage.df, im, fm) # todo uncomment, but takes long
+                fitness = alignment_fitness(net, net_storage.df, im, fm)
+                response["stats"]["precision"] = precision
+                response["stats"]["fitness"] = fitness["averageFitness"]
+        except Exception as e:
+            logging.error(f"Error during alignment metrics calculation: {str(e)}")
+            response["stats"]["alignment error"] = str(e)
 
         InteractionUtils.encode_names_for_transfer(net)
         pnml = export_to_pnml(net, im, fm)

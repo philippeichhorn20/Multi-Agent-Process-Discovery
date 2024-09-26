@@ -288,13 +288,39 @@ progress::-webkit-progress-value {
   cursor: pointer;
   margin: 150px 40px;
   transition: background-color 0.3s ease;
-  
 }
 
 .upload-button:hover {
   background-color: #3e3e3e;
   color: rgb(201, 201, 201);
   border-radius: 0cqmax;
+}
 
 
+.error-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.error-dialog {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.error-dialog h2 {
+  margin-top: 0;
+}
+
+.error-dialog button {
+  margin-top: 10px;
 }

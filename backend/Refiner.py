@@ -163,27 +163,27 @@ class Refiner:
 		# Add places to the Petri net
 		place1 = petri_utils.add_place(net_pn, 'place1')
 		place2 = petri_utils.add_place(net_pn, 'place2')
-		place3 = petri_utils.add_place(net_pn, 'place3')
+		# place3 = petri_utils.add_place(net_pn, 'place3')
 
 		# Add transitions to the Petri net
 		transition1 = petri_utils.add_transition(net_pn, 'transition1')
-		transition2 = petri_utils.add_transition(net_pn, 'transition2')
+		# transition2 = petri_utils.add_transition(net_pn, 'transition2')
 
 		# Create arcs
 		petri_utils.add_arc_from_to(place1, transition1, net_pn)
 		petri_utils.add_arc_from_to(transition1, place2, net_pn)
-		petri_utils.add_arc_from_to(place2, transition2, net_pn)
-		petri_utils.add_arc_from_to(transition2, place3, net_pn)
+		# petri_utils.add_arc_from_to(place2, transition2, net_pn)
+		# petri_utils.add_arc_from_to(transition2, place3, net_pn)
 
 		# Define the initial and final marking
 		initial_marking = pm4py.objects.petri_net.obj.Marking()
 		initial_marking[place1] = 1  # Initial token in place1
 
 		final_marking = pm4py.objects.petri_net.obj.Marking()
-		final_marking[place3] = 1  # Final token in place3
+		final_marking[place2] = 1  # Final token in place3
 
 
-		return net_pn, place2, transition1, transition2
+		return net_pn, initial_marking, final_marking
 
 	@staticmethod
 	def create_simple_petri_net2():

@@ -1,5 +1,4 @@
 import React from 'react';
-
 const UploadView = ({
   file,
   miner,
@@ -14,14 +13,15 @@ const UploadView = ({
   alignmentMetrics,
   setAlignmentMetrics,
   entropyMetrics,
-  setEntropyMetrics
+  setEntropyMetrics,
 }) => {
   return (
     <div>
+
       {file && file.name.endsWith('.xes') && (
         <div className="miner-selection">
 <h4 style={{fontWeight: "w400", marginBottom: "10px",marginTop: "0px", textAlign:"left", fontSize:"24"}}>Select Miner</h4>
-<div className="radio-group">
+  <div className="radio-group">
             <label>
               <input
                 type="radio"
@@ -97,7 +97,7 @@ const UploadView = ({
               Compute Entropy Metrics
             </label>
 </div>
-          <button onClick={handleMinerSelection} className="run-miner-button">
+          <button onClick={ handleMinerSelection} className="run-miner-button">
             {loading ? (
               <progress id="indeterminateProgressBar" max="100"></progress>
             ) : (
@@ -111,11 +111,15 @@ const UploadView = ({
         type="file"
         id="fileInput"
         accept=".pnml,.xes"
+        
         onChange={handleFileUpload}
-        style={{ display:"None"}}
+        style={{ display: "none", position: "absolute", bottom: 0 }}
         className="file-uploader"
       />
+
     </div>
+
+
   );
 };
 

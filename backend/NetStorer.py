@@ -24,4 +24,5 @@ class NetStorer(object):
 
 	def close(self):
 		if os.path.exists(self.xes_path):
-			os.remove(self.xes_path)
+			None
+			# os.remove(self.xes_path)
