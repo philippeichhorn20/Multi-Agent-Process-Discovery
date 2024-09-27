@@ -13,3 +13,5 @@ backend/codebase-master
 backend/split-miner-2
 backend/ip_logs
 .idea
+
+backend/__pycache__
