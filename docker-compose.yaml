@@ -1,0 +1,13 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: backend
+    ports:
+      - "8000:8000"
+  frontend:
+    build:
+      context: ./frontend/process-discovery
+    container_name: frontend
+    ports:
+      - "3000:3000"

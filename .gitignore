@@ -9,3 +9,6 @@ backend/discover/__pycache__/refinement_checker.cpython-310.pyc
 backend/discover/__pycache__/Refiner.cpython-310.pyc
 .idea/inspectionProfiles/Project_Default.xml
 backend/discover/__pycache__/data_loader.cpython-310.pyc
+backend/codebase-master
+backend/split-miner-2
+backend/ip_logs
