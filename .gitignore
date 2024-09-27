@@ -12,3 +12,4 @@ backend/discover/__pycache__/data_loader.cpython-310.pyc
 backend/codebase-master
 backend/split-miner-2
 backend/ip_logs
+.idea
