@@ -1,7 +1,7 @@
 .conda
 .vscode
 .idea/inspectionProfiles/Project_Default.xml
-backend/discover/__pycache__/data_loader.cpython-310.pyc
+backend/discover/__pycache__/
 backend/discover/__pycache__/InteractionUtils.cpython-310.pyc
 backend/discover/__pycache__/interface_patterns.cpython-310.pyc
 backend/discover/__pycache__/refinement_algorithm.cpython-310.pyc
@@ -14,4 +14,14 @@ backend/split-miner-2
 backend/ip_logs
 .idea
 
-backend/__pycache__
+backend/__pycache__/
+backend/__pycache__/api_calls.cpython-310.pyc
+backend/__pycache__/data_loader.cpython-310.pyc
+backend/__pycache__/discover.cpython-310.pyc
+backend/__pycache__/InteractionUtils.cpython-310.pyc
+backend/__pycache__/interface_patterns.cpython-310.pyc
+backend/__pycache__/isomororph_check.cpython-310.pyc
+backend/__pycache__/miner_algorithms.cpython-310.pyc
+backend/__pycache__/NetStorer.cpython-310.pyc
+backend/__pycache__/Reducer.cpython-310.pyc
+backend/__pycache__/stats.cpython-310.pyc
