@@ -69,26 +69,6 @@ class Refiner:
 		petri_utils.add_arc_from_to(new_transition, new_p2, net)
 		petri_utils.remove_place(net, place)
 
-	# def local_transition_adder(net: PetriNet, transition: PetriNet.Transition, place_before_transition: PetriNet.Place, place_after_transition: PetriNet.Place):
-	# 	new_transition = petri_utils.add_transition(net, name=transition.name, label=transition.label)
-	# 	if place_before_transition not in net.places:
-	# 		print('first')
-	# 		new_p1 = petri_utils.add_place(net, name=place_before_transition.name)
-	# 		for t in petri_utils.pre_set(place_before_transition):
-	# 			if t in net.transitions:
-	# 				petri_utils.add_arc_from_to(t, new_p1, net)
-	# 		petri_utils.add_arc_from_to(new_p1, new_transition, net)
-	# 	else:
-	# 		petri_utils.add_arc_from_to(place_before_transition, new_transition, net)
-	# 	if place_after_transition not in net.places:
-	# 		print('second')
-	# 		new_p2 = petri_utils.add_place(net, name=place_after_transition.name)
-	# 		for t in petri_utils.post_set(place_after_transition):
-	# 			petri_utils.add_arc_from_to(new_p2, t, net)
-	# 		petri_utils.add_arc_from_to(new_transition, new_p2, net)
-	# 	else:
-	# 		petri_utils.add_arc_from_to(new_transition, place_after_transition, net)
-
 	@staticmethod
 	def place_splitter(net: PetriNet, place: PetriNet.Place, in_arc_subset: Set):
 		# print("place splitter")

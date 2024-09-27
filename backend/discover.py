@@ -88,32 +88,6 @@ async def run_miner_compose(net_storage, noise_threshold, miner):
 
 
 
-async def run_split_miner_compose(file_content):
-    temp_file_path = 'temp_log.xes'
-    with open(temp_file_path, 'wb') as temp_file:
-        temp_file.write(file_content)
-    log = await asyncio.to_thread(pm4py.read_xes, temp_file_path)
-    
-    # Convert log to dataframe and group by org:resource
-    df = pm4py.convert_to_dataframe(log)
-    df_grouped = df.groupby('org:resource')
-    
-    nets = []
-    for name, group in df_grouped:
-        net, im, fm = await asyncio.to_thread(pm4py.discover_petri_net_split_miner, group)
-        # Add resource name to places and transitions
-        for place in net.places:
-            place.properties['resource'] = name
-        for transition in net.transitions:
-            transition.properties['resource'] = name
-        nets.append((net, im, fm, name))
-    
-    # Merge the discovered Petri nets
-    merged_net, merged_im, merged_fm = pnutils.petri_utils.merge([n[0] for n in nets])
-    
-    return await asyncio.to_thread(export_to_json, merged_net, merged_im, merged_fm)
-
-
 def export_to_pnml(net, initial_marking, final_marking):
     logging.info("Exporting Petri net to PNML")
     temp_pnml_path = 'final_output.pnml'

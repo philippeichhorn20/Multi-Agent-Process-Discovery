@@ -6,6 +6,7 @@ from NetStorer import NetStorer
 
 class Data_Loader:
     def create_petri_net(path):
+
         log = pm4py.read_xes(file_path=path)
         df = pm4py.convert_to_dataframe(log)
         df_grouped = df.groupby(by='org:resource')    # groups it by agent, in this dataset called "org:resource"
@@ -20,8 +21,8 @@ class Data_Loader:
     @staticmethod
     def group_dataframe_by_resource(data_storage: NetStorer):
         """
-        This function builds seperate petri nets for each Agent (1: org:resource, 2: org:group, 3: org:resource)
-        It fetches initializes the 
+        This function splits the logs by the resource.
+        In  doing so it accounts for 3 different log modes.
         """
         df = data_storage.df
 

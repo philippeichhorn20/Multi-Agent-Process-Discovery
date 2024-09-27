@@ -71,15 +71,14 @@ const VizViewer = ({ dotString, width, height, setDotString }) => {
        }}>
         Download SVG
       </button>
-      <button onClick={changeDirection} style={{ position: "absolute", bottom:0, left:0, zIndex:10, margin:10
+      <button onClick={changeDirection} style={{ position:"absolute", bottom:0, left:0, zIndex:10, margin:10
        }}>
-        switcheroo
+        Switch Direction
       </button>
       <TransformWrapper
         initialScale={1}
         initialPositionX={0}
         initialPositionY={0}
-        
       >
         <TransformComponent>
         <div className="svg-container" ref={svgContainerRef} style={{ width: width, height: height}} />  

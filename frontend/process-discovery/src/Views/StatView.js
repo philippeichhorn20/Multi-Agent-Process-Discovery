@@ -20,10 +20,10 @@ const StatView = ({ statistics, colors, resources }) => {
           ))}
         </tbody>
       </table>
-    <div className="legend">
+    <div className="legend" style={{paddingLeft:"10px"}}>
       {resources.map((resource, index) => (
-        <div key={index} style={{ display: 'flex', alignItems: 'center' , fontSize:'7px'}}>
-          <div style={{ width: '5px', height: '5px', backgroundColor: colors[index], margin:"5px" }}></div>
+        <div key={index} style={{ display: 'flex', alignItems: 'center' , fontSize:'8px'}}>
+          <div style={{ width: '15px', height: '10px', backgroundColor: colors[index], margin:"5px", borderRadius:"2px" }}></div>
           <span>{resource == "X"? "Interaction Places":resource}</span>
         </div>
       ))}

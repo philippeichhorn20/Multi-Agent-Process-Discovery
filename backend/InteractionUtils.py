@@ -12,8 +12,17 @@ import re
 
 class InteractionUtils:
 
+
+	'''
+	This class is responsible for merging the resource-specific nets into one detailed interaction model.
+	'''
+
 	@staticmethod
 	def connect_async_interactions(net: PetriNet):
+		'''
+		Connects all send_message transitions with the respective receive_message transition. And adds a place in between.
+		'''
+
 		for trans in net.transitions:
 			if trans.label and '!' in trans.label:
 				trans.properties.update({"resource": '!'})
@@ -52,6 +61,9 @@ class InteractionUtils:
 
 	@staticmethod
 	def connect_sync_interactions(net:PetriNet):
+		'''
+		Connects shared transitions by merging them into one.
+		'''
 		for trans in net.transitions.copy():
 			for trans2 in net.transitions.copy():
 				if net.transitions.__contains__(trans2) and net.transitions.__contains__(trans):
@@ -84,6 +96,9 @@ class InteractionUtils:
 
 	@staticmethod
 	def encode_name(place_or_transition):
+		"""
+		Encodes all names as "<resource>:<name>"
+		"""
 		if not place_or_transition:
 			return ""
 		string = ""
@@ -97,6 +112,7 @@ class InteractionUtils:
 		else:
 			string += (place_or_transition.label if place_or_transition.label != None else (place_or_transition.name if place_or_transition.name else ""))
 		return string
+	
 	@staticmethod
 	def encode_names_for_transfer(net: PetriNet):
 		for x in net.places:
@@ -108,7 +124,9 @@ class InteractionUtils:
 
 	@staticmethod
 	def extract_messages(trans_label):		
-	
+		"""
+		In some logs, one transition can send multiple messages. These are extracted and returned as a list
+		"""		
 		trans_label = trans_label.split("__")[1]
 		if(trans_label ==""):
 			return set(),set()
@@ -128,6 +146,9 @@ class InteractionUtils:
 
 	@staticmethod
 	def match_messages(trans1_label, trans2_label):
+		"""
+		Returns all message connections between the two given transitions.
+		"""
 		sent1, received1 = InteractionUtils.extract_messages(trans1_label)
 	
 		sent2, received2 = InteractionUtils.extract_messages(trans2_label)

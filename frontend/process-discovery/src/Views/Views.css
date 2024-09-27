@@ -8,6 +8,9 @@
 }
 
 .header{
+  font-weight: 600;
+  font-size: 20px;
+  color: rgb(86, 85, 85);
   text-align: left;
   padding: 20px;
   background-color: #e5e3e3;
@@ -39,7 +42,7 @@
 }
 
 .viz-viewer {
-  font-family: 'Courier New', Courier, monospace; /* Added monospace font */
+  color: rgb(86, 85, 85)
 }
 
 .error {
@@ -119,7 +122,7 @@
 }
 
 .run-miner-button {
-  background-color: #007bff;
+  background-color:  rgb(86, 85, 85);
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -131,7 +134,7 @@
 }
 
 .run-miner-button:hover {
-  background-color: #0056b3;
+  background-color: rgb(86, 85, 85);
 }
 
 
@@ -173,18 +176,20 @@ progress::-webkit-progress-value {
 
 /* Styling for the header section (title and subtitle) */
 .viz-header {
+  color:rgb(86, 85, 85);
   text-align: center;
   margin-bottom: 10px; /* Space between header and the VizViewer */
 }
 
 /* Title styling */
 .viz-title {
+  background-color: rgb(86, 85, 85);
   text-align: left;
   font-size: 14px;
   font-weight: bold;
   margin: 0;
-  padding-left: 3px;
-  color: #333;
+  padding:10px 15px;
+  color:  rgb(255, 255, 255);
 }
 
 /* Subtitle styling */
@@ -193,7 +198,7 @@ progress::-webkit-progress-value {
   font-size: 8px;
   font-weight: normal;
   margin: 0;
-  color: #484848;
+  color: #8b8989;
   text-align: left;
 }
 /* Container styling */
@@ -230,7 +235,7 @@ progress::-webkit-progress-value {
 }
 
 .stat-table th {
-  background-color: #007BFF;
+  background-color:  rgb(86, 85, 85);
   color: #fff;
   font-weight: bold;
   text-transform: uppercase;
@@ -241,6 +246,7 @@ progress::-webkit-progress-value {
 }
 
 .stat-table tr:hover {
+  
   background-color: #e2e2e2;
   transition: background-color 0.3s;
 }
@@ -278,11 +284,11 @@ progress::-webkit-progress-value {
 
 .upload-button {
   font-weight: 600;
+  font-size: 16px;
+  color: rgb(86, 85, 85);
   text-align: center;
   background-color: #e5e3e3;
-  color: rgb(86, 85, 85);
   padding: 15px 30px;
-  font-size: 16px;
   border: 1px solid #000000;
   border-radius: 5px;
   cursor: pointer;

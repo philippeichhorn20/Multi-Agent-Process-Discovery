@@ -2,6 +2,12 @@ import pm4py
 from pm4py import PetriNet
 from pm4py.objects.petri_net.utils import petri_utils
 
+'''
+Implementation of all the Interface Patterns described in the underliying paper.
++ IP2b, which is a slight modification of IP2. See for details
+'''
+
+
 
 class interface_patterns:
 	patterns: list = []

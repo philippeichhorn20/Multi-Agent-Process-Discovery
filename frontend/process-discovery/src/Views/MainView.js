@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-import VizViewer from './VizViewer';
-import { parsePnmlToDot, parseJsonToDot } from '../Parser/dot_parser';
+import { parsePnmlToDot } from '../Parser/dot_parser';
 import './Views.css';
 import LeftScreen from './LeftScreen';
-import StatView from './StatView';
 import { run_miner } from '../DatabaseRequests';
 import UploadView from './UploadView';
 

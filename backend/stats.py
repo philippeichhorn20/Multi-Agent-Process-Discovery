@@ -36,19 +36,22 @@ def entropy_based_precision(net_storage: NetStorer.NetStorer, net: PetriNet, ini
         xes_path = './entropy_temp_log.xes'
         pnml_path = './entropy_temp_net.pnml'
 
-
         # pm4py.write.write_xes(log=net_storage.df, file_path=xes_path, case_id_key='case:concept:name', encoding="utf-8", )
         pm4py.write.write_pnml(petri_net=net, initial_marking=initial, final_marking=final,file_path=pnml_path)
 
-        cmd = ["java", "-jar", f"codebase-master/jbpt-pm/entropia/jbpt-pm-entropia-1.7.jar", "-empr", f"-rel={net_storage.xes_path}", f"-ret={pnml_path}"]
-        result = subprocess.run(cmd)
+        cmd = ["java", "-jar", f"codebase-master/jbpt-pm/entropia/jbpt-pm-entropia-1.7.jar", "-empr","-s", f"-rel={net_storage.xes_path}", f"-ret={pnml_path}"]
+        result = subprocess.run(cmd, capture_output=True,timeout=60000 )
+
         responsestring = result.stdout.decode('utf-8')
-        print("response: ", responsestring)
-        precision, recall = responsestring.split(", ")
+        print("res", responsestring)
+        precision, recall = 0,0
+        if(responsestring.__contains__(",")):
+            precision, recall = responsestring.split(", ")
+
     finally:
         None
-        # if os.path.exists(xes_path):
-        #     os.remove(xes_path)
-        # if os.path.exists(pnml_path):
-        #     os.remove(pnml_path)
+        if os.path.exists(xes_path):
+            os.remove(xes_path)
+        if os.path.exists(pnml_path):
+            os.remove(pnml_path)
     return precision, recall

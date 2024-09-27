@@ -4,7 +4,6 @@ import pm4py
 import subprocess
 
 
-
 def split_miner(path: str, var):
 	output_path = "/Users/philippeichhorn/IdeaProjects/Multi-Agent-Process-Discovery/backend/output"
 	cmd = ["java", "-cp", f"split-miner-2/sm2.jar:split-miner-2/lib/*", "au.edu.unimelb.services.ServiceProvider", "SM2", path, output_path, f"{var}"]

@@ -93,7 +93,7 @@ const LeftScreenContent = ({
         }}>
 <div className="viz-header">
           <h2 className="viz-title">Abstract View</h2>
-          <p className="viz-subtitle">This is the smallest net achievable, by applying the abstraction operation. If this net is sound, so is the composed net. Seee below, if it matches one of the IP-Interaction Patterns</p>
+          {/* <p className="viz-subtitle">The compsitional net after applying the abstraction operations.</p> */}
         </div>
           <VizViewer 
             dotString={abstractDotString} 

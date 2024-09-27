@@ -1,9 +1,11 @@
+# This file is mostly copied and not my work
+
 import xml.dom.minidom as minidom
 import random
 
 def determine_agent(concept_name):
     if concept_name.startswith("s"):
-        if( random.randint(0,1) == 1):
+        if random.randint(0,1) == 1:
             return ["Agent 1"]
         else:
             return ["Agent 2"]

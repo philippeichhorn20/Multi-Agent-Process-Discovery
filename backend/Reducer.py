@@ -4,17 +4,7 @@ from pm4py.objects.petri_net.utils import petri_utils
 
 class Reducer:
 	"""
-    Refinement Operations:
-
-    1. Place Duplication ->  should be place addition I think. > Thus implemented like so
-    2. Transition Duplication
-    3. Local Transition introduction
-    4. Place Split
-
-    5. No change, move ahead
-
-    We define a reverse refiner, a reducer, which contains the following methods:
-    1. Place Removal -> removes a place if it connects two transitions that are not inter-agent-communicating
+	Implements the basic abstraction rules as lined out in the paper: "Property-Preserving Transformations of Elementary Net Systems Based on Morphisms".
     """
 
 
@@ -44,7 +34,7 @@ class Reducer:
 						changes.append(('split_place', transition))
 						has_changed = True
 						if(print_enabled):
-							print("trans pds")
+							print("Preset disjoint simplification")
 							pm4py.view_petri_net(pnet)
 			for transition in pnet.transitions.copy():
 				if True or not 'resource' in transition.properties or transition.properties['resource'] not in ['!', '?', 'sync', True]: # disabled with True
@@ -87,7 +77,6 @@ class Reducer:
 			place_after_transition = list(transition.out_arcs)[0].target  #gets pointed from first_transition
 			# changes.append(('add_local_transition', (transition, place_before_transition, place_after_transition) ))
 			if(
-				# start: extra condition
 				(
 					my_way or (				
 				len(petri_utils.post_set(place_before_transition) )== 1
@@ -98,7 +87,6 @@ class Reducer:
 				and
 				petri_utils.post_set(place_before_transition) == {transition}
 				))
-				# end: extra condition
 				and
 				(len(place_before_transition.out_arcs) == 1)
 				or 
@@ -114,12 +102,6 @@ class Reducer:
 					petri_utils.post_set(place_after_transition)
 				))==0
 			):
-				# for t in petri_utils.pre_set(place_before_transition):
-				# 	petri_utils.add_arc_from_to(t,place_after_transition, net) 
-				# print(transition.label)
-				# petri_utils.remove_transition(net, transition)
-				# petri_utils.remove_place(net, place_before_transition)
-				# return True
 
 				if len(place_before_transition.out_arcs) == 1: # removing place_before_transition + transition
 					for t in petri_utils.pre_set(place_before_transition):
@@ -175,17 +157,12 @@ class Reducer:
 				and 
 				place != other_place
 				):
-			# if (set(arc.source for arc in other_place.in_arcs) == set(
-			# 	arc.source for arc in place.in_arcs) and set(
-			# 	arc.target for arc in other_place.out_arcs) == set(
-			# 	arc.target for arc in place.out_arcs) and place != other_place):
 				petri_utils.remove_place(net, place)
-				# print("remove place: ",
-				#       [in_arcs.source.label for in_arcs in place.in_arcs],
-				#       [out_arcs.target.label for out_arcs in place.out_arcs])
 				return True
 		return False
 
+
+	# Reverse enginered Refinement Operation "Split Place" -> opted to use the 
 	# @staticmethod
 	# def place_merge(net, place):
 	# 	for other_place in net.places:
@@ -225,6 +202,9 @@ class Reducer:
 
 
 	def postset_empty_place_simplifications(net: PetriNet, place: PetriNet.Place, my_way = True):
+		# This operation was not neeeded, because 
+		# a) there is no splitting opertion 
+		# b) the different resources were not supposed to merge into one, but stay seperate flows
 		for other_place in net.places.copy():
 			if (
 				len(petri_utils.post_set(place)) == 0
@@ -252,11 +232,10 @@ class Reducer:
 
 				if len(list(preset)[0].out_arcs)>1 or len(list(other_preset)[0].out_arcs)>1:
 					# not specified in paper, but i think it maybe should have been
-					print("unfofficial rule in action")
+					print("unofficial rule in action")
 					return False
 				
 			
-				# TODO sequential component???
 				for p, other_p in  zip(preset, other_preset.copy()):
 					for arc in other_p.in_arcs.copy():
 						petri_utils.add_arc_from_to(arc.source, p, net)
@@ -283,7 +262,7 @@ class reduction_utils:
 		*	- be a state machine 
 		*		- therefore be a connected net
 		*		- therefore ∀t ∈ T : |•t| = |t•| = 1
-			- has single token in initial marking (TODO)
+			- has single token in initial marking
 		-- only conditions with * are implemented so far -- 
 		 '''
 		# connectedness of graph:
@@ -305,28 +284,22 @@ class reduction_utils:
 			if len(trans.in_arcs) != 1 or len(trans.out_arcs) != 1:
 				return False
 		return True
-		# checking connectedness
-		for trans in connected_trans_t1:
-			if any(p in t2_preset for p in petri_utils.pre_set(trans)) or any(p in t2_preset for p in petri_utils.post_set(trans)):
-				print("connectedness proven")
-				return True
-		for trans in connected_trans_t2:
-			if any(p in t1_preset for p in petri_utils.pre_set(trans)) or any(p in t1_preset for p in petri_utils.post_set(trans)):
-				print("connectedness proven")
-				return True
-
-		
-		return False
+		# for trans in connected_trans_t1:
+		# 	if any(p in t2_preset for p in petri_utils.pre_set(trans)) or any(p in t2_preset for p in petri_utils.post_set(trans)):
+		# 		print("connectedness proven")
+		# 		return True
+		# for trans in connected_trans_t2:
+		# 	if any(p in t1_preset for p in petri_utils.pre_set(trans)) or any(p in t1_preset for p in petri_utils.post_set(trans)):
+		# 		print("connectedness proven")
+		# 		return True
+		# return False
 
 
 
 	@staticmethod
 	def string_match(str1: str, str2: str): # if it is a interaction model, it has to be of same interaction object (a!_2==a!_2 but )
 		"""
-		advanced matching to ensure:
-		 - transitions can be merged, as long as no interaction gets lost
-
-
+		advanced matching to ensure: transitions can only be merged, as long as no interaction gets lost
 		"""
 		str1_is_interact = isinstance(str1, str) and ('!' in str1 or '?'  in str1 or 's' == str1.split("_")[0])
 		str2_is_interact = isinstance(str2, str) and ('!' in str2 or '?'  in str2 or 's' == str2.split("_")[0])
@@ -337,14 +310,7 @@ class reduction_utils:
 		if(not str1_is_interact and str2_is_interact):
 			return False
 		str1 = str1.split('_')[0]
-		str2 = str2.split('_')[0]
+		str2 = str2.split('_')[0] # the labels can still be the same, but are numbered (ie a_2 == a_1: since both are a)
 
 		return str1 == str2 # both are interactive -> merge, if they have the same label
-	
-		# min_len = min(len(str1), len(str2)) 
-		# for i in range(min_len): # both are interactive -> merge if label matches
-		# 	if str1[i] != str2[i] or str1[i] == '_':
-		# 		return i == 0 or str1[i] == '_'
-		# print(str1, str2, "deuwgh")
-		# return False
 	

@@ -20,7 +20,7 @@ const UploadView = ({
 
       {file && file.name.endsWith('.xes') && (
         <div className="miner-selection">
-<h4 style={{fontWeight: "w400", marginBottom: "10px",marginTop: "0px", textAlign:"left", fontSize:"24"}}>Select Miner</h4>
+<h4 style={{fontWeight: "w400", marginBottom: "10px",marginTop: "0px", textAlign:"left", fontSize:"24", color:"rgb(86, 85, 85)"}}>Select Miner</h4>
   <div className="radio-group">
             <label>
               <input
