@@ -1,4 +1,4 @@
-# Multi-Agent Petri Net Mining
+# Multi-Agent Petri Net Mining (Grade 1.3)
 
 This project was developed as part of a university practical course on process mining. The goal was to implement algorithms that generate **multi-agent petri nets** from process log files.
 
