@@ -19,7 +19,7 @@ To address this, I **reversed the refinement process**:
 - Refinements were transformed into **reduction operations**.
 - These reductions were applied to the mined multi-agent petri nets.
 
-This reverse approach significantly improved performance and allowed detection of the underlying interaction pattern—even when it didn’t exactly match any predefined patterns.
+This reverse approach significantly improved performance and allowed detection of the underlying interaction pattern, even when it didn’t exactly match any predefined patterns.
 
 <img width="1470" height="920" alt="Screenshot 2025-08-10 at 13 49 23" src="https://github.com/user-attachments/assets/96fb59c4-731b-44de-8768-8b7cb2c42071" />
 
