@@ -12,14 +12,16 @@ This project was developed as part of a university practical course on process m
 
 In the [original research paper](https://doi.org/10.1007/s10270-022-01008-x), the authors proposed starting with a small interaction pattern and refining it. While theoretically sound, this quickly led to **combinatorial explosion** and proved impractical.
 
-## My Contribution
+## The Key Challenge
 
-To address this, I **reversed the refinement process**:
+To address the  exploding search space, I reversed the refinement process:
 
-- Refinements were transformed into **reduction operations**.
+- Refinements were transformed into reduction operations.
 - These reductions were applied to the mined multi-agent petri nets.
 
 This reverse approach significantly improved performance and allowed detection of the underlying interaction pattern, even when it didn’t exactly match any predefined patterns.
+
+### 90% of the work was done on the backend side
 
 <img width="1470" height="920" alt="Screenshot 2025-08-10 at 13 49 23" src="https://github.com/user-attachments/assets/96fb59c4-731b-44de-8768-8b7cb2c42071" />
 
